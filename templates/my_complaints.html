@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>My Complaints - General Grievance Portal</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            color: #1f2937;
+        }
+
+        nav {
+            background: #0f172a;
+            padding: 16px 7%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        nav .logo {
+            color: white;
+            font-size: 21px;
+            font-weight: bold;
+        }
+
+        nav .links {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        nav a {
+            color: #e2e8f0;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        nav a:hover {
+            color: white;
+        }
+
+        .badge {
+            display: inline-block;
+            min-width: 20px;
+            padding: 2px 6px;
+            margin-left: 5px;
+            border-radius: 10px;
+            background: #dc2626;
+            color: white;
+            font-size: 12px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .container {
+            width: 86%;
+            max-width: 1100px;
+            margin: 45px auto;
+        }
+
+        .header {
+            margin-bottom: 28px;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 8px;
+            color: #0f172a;
+        }
+
+        .header p {
+            color: #64748b;
+        }
+
+        .notification {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 9px 14px;
+            border-radius: 8px;
+            background: #fee2e2;
+            color: #991b1b;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .complaints {
+            display: grid;
+            grid-template-columns: repeat(
+                auto-fit,
+                minmax(290px, 1fr)
+            );
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 23px;
+            border-radius: 14px;
+            box-shadow: 0 4px 18px rgba(15, 23, 42, 0.07);
+            border-left: 5px solid #2563eb;
+        }
+
+        .card.unread {
+            border-left-color: #dc2626;
+        }
+
+        .case-id {
+            font-size: 18px;
+            font-weight: bold;
+            color: #0f172a;
+            margin-bottom: 12px;
+        }
+
+        .detail {
+            margin: 8px 0;
+            font-size: 14px;
+        }
+
+        .label {
+            font-weight: bold;
+            color: #475569;
+        }
+
+        .status {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 6px 11px;
+            border-radius: 20px;
+            background: #dbeafe;
+            color: #1d4ed8;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .unread-label {
+            display: inline-block;
+            margin-left: 7px;
+            padding: 5px 9px;
+            border-radius: 15px;
+            background: #fee2e2;
+            color: #b91c1c;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .actions {
+            margin-top: 18px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 18px;
+            background: #2563eb;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .btn:hover {
+            background: #1d4ed8;
+        }
+
+        .empty {
+            background: white;
+            padding: 45px;
+            border-radius: 14px;
+            text-align: center;
+            box-shadow: 0 4px 18px rgba(15, 23, 42, 0.07);
+        }
+
+        .empty h2 {
+            margin-bottom: 10px;
+            color: #334155;
+        }
+
+        .empty p {
+            color: #64748b;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 600px) {
+
+            .container {
+                width: 92%;
+                margin: 30px auto;
+            }
+
+            nav {
+                padding: 15px 4%;
+            }
+
+            .header h1 {
+                font-size: 27px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<nav>
+
+    <div class="logo">
+        General Grievance Portal
+    </div>
+
+
+    <div class="links">
+
+        <a href="{{ url_for('home') }}">
+            Home
+        </a>
+
+        <a href="{{ url_for('track') }}">
+            Track Case
+        </a>
+
+        <a href="{{ url_for('my_complaints') }}">
+            My Complaints
+
+            {% if unread_message_count > 0 %}
+
+                <span class="badge">
+                    {{ unread_message_count }}
+                </span>
+
+            {% endif %}
+
+        </a>
+
+
+        <a href="{{ url_for('notifications') }}">
+
+            🔔
+
+            {% if unread_message_count > 0 %}
+
+                <span class="badge">
+                    {{ unread_message_count }}
+                </span>
+
+            {% endif %}
+
+        </a>
+
+
+        <a href="{{ url_for('logout') }}">
+            Logout
+        </a>
+
+    </div>
+
+</nav>
+
+
+<div class="container">
+
+    <div class="header">
+
+        <h1>
+            My Complaints
+        </h1>
+
+        <p>
+            View and manage the grievances submitted from your account.
+        </p>
+
+
+        {% if unread_message_count > 0 %}
+
+            <div class="notification">
+
+                {{ unread_message_count }}
+
+                unread message{% if unread_message_count != 1 %}s{% endif %}
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+
+    {% if complaints %}
+
+        <div class="complaints">
+
+            {% for complaint in complaints %}
+
+                <div class="
+                    card
+                    {% if complaint.get('unread_count', 0) > 0 %}
+                        unread
+                    {% endif %}
+                ">
+
+                    <div class="case-id">
+                        {{ complaint['case_id'] }}
+                    </div>
+
+
+                    <div class="detail">
+
+                        <span class="label">
+                            Category:
+                        </span>
+
+                        {{ complaint['category'] }}
+
+                    </div>
+
+
+                    <div class="detail">
+
+                        <span class="label">
+                            Organization:
+                        </span>
+
+                        {{ complaint['organization_name'] }}
+
+                    </div>
+
+
+                    <div class="detail">
+
+                        <span class="label">
+                            Submitted:
+                        </span>
+
+                        {{ complaint['created_at'] }}
+
+                    </div>
+
+
+                    <div>
+
+                        <span class="status">
+                            {{ complaint['status'] }}
+                        </span>
+
+
+                        {% if complaint.get('unread_count', 0) > 0 %}
+
+                            <span class="unread-label">
+
+                                {{ complaint['unread_count'] }}
+
+                                new
+
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <div class="actions">
+
+                        <a
+                            class="btn"
+                            href="{{ url_for(
+                                'my_complaint_case',
+                                case_id=complaint['case_id']
+                            ) }}"
+                        >
+                            Open Case
+                        </a>
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="empty">
+
+            <h2>
+                No complaints yet
+            </h2>
+
+            <p>
+                You have not submitted any grievances.
+            </p>
+
+            <a
+                class="btn"
+                href="{{ url_for('complaint') }}"
+            >
+                Submit a Grievance
+            </a>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+</body>
+
+</html>

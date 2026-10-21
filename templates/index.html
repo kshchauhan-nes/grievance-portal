@@ -1,198 +1,627 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>NCC Grievance Portal</title>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>
+        General Grievance Portal
+    </title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f8fafc;
+            color: #1e293b;
+        }
+
+        nav {
+            background: #0f172a;
+            padding: 16px 7%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .logo {
+            color: white;
+            font-size: 21px;
+            font-weight: bold;
+        }
+
+        .links {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        nav a {
+            color: #e2e8f0;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        nav a:hover {
+            color: white;
+        }
+
+        .badge {
+            display: inline-block;
+            min-width: 20px;
+            padding: 2px 6px;
+            margin-left: 5px;
+            border-radius: 10px;
+            background: #dc2626;
+            color: white;
+            font-size: 12px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .hero {
+            min-height: 62vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 55px 7%;
+        }
+
+        .hero-content {
+            max-width: 900px;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 48px;
+            color: #0f172a;
+            margin-bottom: 18px;
+        }
+
+        .hero h1 span {
+            color: #2563eb;
+        }
+
+        .hero p {
+            max-width: 700px;
+            margin: auto;
+            color: #64748b;
+            font-size: 18px;
+            line-height: 1.7;
+        }
+
+        .buttons {
+            margin-top: 30px;
+            display: flex;
+            justify-content: center;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 22px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .primary {
+            background: #2563eb;
+            color: white;
+        }
+
+        .primary:hover {
+            background: #1d4ed8;
+        }
+
+        .secondary {
+            background: white;
+            color: #2563eb;
+            border: 1px solid #2563eb;
+        }
+
+        .secondary:hover {
+            background: #eff6ff;
+        }
+
+        /* SECTIONS */
+
+        .portal-sections {
+            width: 86%;
+            max-width: 1100px;
+            margin: 0 auto 45px;
+        }
+
+        .portal-heading {
+            text-align: center;
+            margin-bottom: 22px;
+        }
+
+        .portal-heading h2 {
+            font-size: 28px;
+            color: #0f172a;
+            margin-bottom: 8px;
+        }
+
+        .portal-heading p {
+            color: #64748b;
+            font-size: 15px;
+        }
+
+        .section-grid {
+            display: grid;
+            grid-template-columns:
+                repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .portal-card {
+            background: white;
+            padding: 28px;
+            border-radius: 15px;
+            box-shadow:
+                0 4px 18px
+                rgba(15, 23, 42, 0.07);
+            text-align: center;
+            transition: transform 0.2s ease,
+                        box-shadow 0.2s ease;
+        }
+
+        .portal-card:hover {
+            transform: translateY(-4px);
+            box-shadow:
+                0 8px 25px
+                rgba(15, 23, 42, 0.10);
+        }
+
+        .portal-icon {
+            width: 58px;
+            height: 58px;
+            margin: 0 auto 15px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #eff6ff;
+            font-size: 27px;
+        }
+
+        .portal-card h3 {
+            margin-bottom: 9px;
+            color: #0f172a;
+        }
+
+        .portal-card p {
+            color: #64748b;
+            line-height: 1.5;
+            font-size: 14px;
+        }
+
+        /* FEATURES */
+
+        .features {
+            width: 86%;
+            max-width: 1100px;
+            margin: 0 auto 60px;
+            display: grid;
+            grid-template-columns:
+                repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        .feature {
+            background: white;
+            padding: 25px;
+            border-radius: 14px;
+            box-shadow:
+                0 4px 18px
+                rgba(15, 23, 42, 0.06);
+        }
+
+        .feature h3 {
+            margin-bottom: 9px;
+            color: #0f172a;
+        }
+
+        .feature p {
+            color: #64748b;
+            line-height: 1.5;
+            font-size: 14px;
+        }
+
+        @media (max-width: 850px) {
+
+            .section-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .features {
+                grid-template-columns:
+                    repeat(2, 1fr);
+            }
+
+        }
+
+        @media (max-width: 600px) {
+
+            .hero {
+                padding-top: 40px;
+            }
+
+            .hero h1 {
+                font-size: 35px;
+            }
+
+            .hero p {
+                font-size: 16px;
+            }
+
+            nav {
+                padding: 15px 4%;
+            }
+
+            .features {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+    </style>
+
 </head>
+
 
 <body>
 
-    <header>
-        <nav>
-            <div class="logo">
-                NCC Grievance Portal
-            </div>
 
-            <div class="nav-links">
-                <a href="#">Home</a>
-                <a href="#">How It Works</a>
-                <a href="#">Track Case</a>
-            </div>
-        </nav>
-    </header>
+<nav>
+
+    <div class="logo">
+        General Grievance Portal
+    </div>
 
 
-    <main>
+    <div class="links">
 
-        <section class="hero">
+        <a href="/">
+            Home
+        </a>
 
-            <div class="hero-content">
+        <a href="/track">
+            Track Case
+        </a>
 
-                <p class="tagline">
-                    CONFIDENTIAL GRIEVANCE MANAGEMENT
-                </p>
 
-                <h1>
-                    Your concern.
-                    <span>Protected and trackable.</span>
-                </h1>
+        {% if session.get('user_id') %}
 
-                <p class="description">
-                    A structured platform for reporting NCC-related
-                    grievances while minimizing unnecessary exposure
-                    of the complainant's identity.
-                </p>
+            {% if session.get('role') == 'authority' %}
 
-                <div class="buttons">
+                <a href="/authority/dashboard">
 
-                    <a href="/complaint" class="primary-btn">
+                    Dashboard
+
+                    {% if unread_message_count > 0 %}
+
+                        <span class="badge">
+                            {{ unread_message_count }}
+                        </span>
+
+                    {% endif %}
+
+                </a>
+
+            {% else %}
+
+                <a href="/my-complaints">
+
+                    My Complaints
+
+                    {% if unread_message_count > 0 %}
+
+                        <span class="badge">
+                            {{ unread_message_count }}
+                        </span>
+
+                    {% endif %}
+
+                </a>
+
+            {% endif %}
+
+
+            <a href="/notifications">
+
+                🔔
+
+                {% if unread_message_count > 0 %}
+
+                    <span class="badge">
+                        {{ unread_message_count }}
+                    </span>
+
+                {% endif %}
+
+            </a>
+
+
+            <a href="/logout">
+                Logout
+            </a>
+
+
+        {% else %}
+
+            <a href="/login">
+                Login
+            </a>
+
+            <a href="/register">
+                Register
+            </a>
+
+        {% endif %}
+
+    </div>
+
+</nav>
+
+
+<!-- =================================================
+     HERO
+     ================================================= -->
+
+<section class="hero">
+
+    <div class="hero-content">
+
+        <h1>
+            General
+            <span>Grievance Portal</span>
+        </h1>
+
+
+        <p>
+            A secure and transparent platform for
+            submitting, tracking, and resolving grievances
+            across schools, hospitals, and NCC.
+        </p>
+
+
+        <div class="buttons">
+
+
+            {% if session.get('user_id') %}
+
+
+                {% if session.get('role') == 'authority' %}
+
+                    <a
+                        href="/authority/dashboard"
+                        class="btn primary">
+
+                        Open Dashboard
+
+                    </a>
+
+
+                {% else %}
+
+                    <a
+                        href="/complaint"
+                        class="btn primary">
+
                         Submit a Grievance
+
                     </a>
 
-                    <a href="/track" class="secondary-btn">
-                        Track a Case
+
+                    <a
+                        href="/my-complaints"
+                        class="btn secondary">
+
+                        My Complaints
+
                     </a>
 
-                </div>
+                {% endif %}
 
+
+            {% else %}
+
+                <a
+                    href="/complaint"
+                    class="btn primary">
+
+                    Submit a Grievance
+
+                </a>
+
+
+                <a
+                    href="/track"
+                    class="btn secondary">
+
+                    Track a Case
+
+                </a>
+
+            {% endif %}
+
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =================================================
+     PORTAL SECTIONS
+     ================================================= -->
+
+<section class="portal-sections">
+
+
+    <div class="portal-heading">
+
+        <h2>
+            Choose Your Section
+        </h2>
+
+        <p>
+            One portal for multiple institutional
+            grievance systems.
+        </p>
+
+    </div>
+
+
+    <div class="section-grid">
+
+
+        <div class="portal-card">
+
+            <div class="portal-icon">
+                🏫
             </div>
 
-
-            <div class="case-card">
-
-                <p class="card-label">
-                    PROTECTED CASE
-                </p>
-
-                <h2>
-                    NCC-7A42F91C
-                </h2>
-
-                <p class="case-status">
-                    ● Under Review
-                </p>
-
-                <div class="timeline">
-
-                    <div class="timeline-item completed">
-                        <strong>✓</strong>
-                        <span>Complaint submitted</span>
-                    </div>
-
-                    <div class="timeline-item completed">
-                        <strong>✓</strong>
-                        <span>Initial review</span>
-                    </div>
-
-                    <div class="timeline-item active">
-                        <strong>3</strong>
-                        <span>Authority response</span>
-                    </div>
-
-                    <div class="timeline-item">
-                        <strong>4</strong>
-                        <span>Escalation if required</span>
-                    </div>
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-        <section class="how-it-works">
-
-            <p class="tagline">
-                HOW IT WORKS
-            </p>
-
-            <h2>
-                A clear path from report to resolution.
-            </h2>
-
-
-            <div class="steps">
-
-                <div class="step">
-                    <span>01</span>
-                    <h3>Submit</h3>
-                    <p>
-                        Provide the facts, context and supporting
-                        evidence related to the grievance.
-                    </p>
-                </div>
-
-                <div class="step">
-                    <span>02</span>
-                    <h3>Review</h3>
-                    <p>
-                        The complaint is organized into a structured
-                        case for review.
-                    </p>
-                </div>
-
-                <div class="step">
-                    <span>03</span>
-                    <h3>Forward</h3>
-                    <p>
-                        The case can be routed to the appropriate
-                        authority.
-                    </p>
-                </div>
-
-                <div class="step">
-                    <span>04</span>
-                    <h3>Track & Escalate</h3>
-                    <p>
-                        Monitor the case and record the next step
-                        when a response is not received.
-                    </p>
-                </div>
-
-            </div>
-
-        </section>
-
-
-        <section class="privacy">
-
-            <div>
-
-                <p class="tagline">
-                    PRIVACY BY DESIGN
-                </p>
-
-                <h2>
-                    Identity protection is a core feature.
-                </h2>
-
-            </div>
+            <h3>
+                School
+            </h3>
 
             <p>
-                The platform is designed to minimize unnecessary
-                exposure of complainant information while maintaining
-                a structured case history.
+                Academic, staff, student,
+                infrastructure, disciplinary,
+                and administrative grievances.
             </p>
 
-        </section>
-
-    </main>
+        </div>
 
 
-    <footer>
+        <div class="portal-card">
 
-        <strong>NCC Grievance Portal</strong>
+            <div class="portal-icon">
+                🏥
+            </div>
 
-        <span>
-            Prototype — not an official NCC government portal.
-        </span>
+            <h3>
+                Hospital
+            </h3>
 
-    </footer>
+            <p>
+                Patient services, medical staff,
+                facilities, waiting time,
+                and administrative concerns.
+            </p>
+
+        </div>
+
+
+        <div class="portal-card">
+
+            <div class="portal-icon">
+                🎖️
+            </div>
+
+            <h3>
+                NCC
+            </h3>
+
+            <p>
+                Training, attendance, conduct,
+                administration, camps,
+                and unit-related concerns.
+            </p>
+
+        </div>
+
+
+    </div>
+
+</section>
+
+
+<!-- =================================================
+     FEATURES
+     ================================================= -->
+
+<section class="features">
+
+
+    <div class="feature">
+
+        <h3>
+            Secure Submission
+        </h3>
+
+        <p>
+            Submit grievances through a structured
+            and privacy-focused process.
+        </p>
+
+    </div>
+
+
+    <div class="feature">
+
+        <h3>
+            Case Tracking
+        </h3>
+
+        <p>
+            Track your grievance using its unique
+            Case ID and timeline.
+        </p>
+
+    </div>
+
+
+    <div class="feature">
+
+        <h3>
+            Transparent Updates
+        </h3>
+
+        <p>
+            Follow status changes and communication
+            throughout the case lifecycle.
+        </p>
+
+    </div>
+
+
+    <div class="feature">
+
+        <h3>
+            Direct Communication
+        </h3>
+
+        <p>
+            Communicate with the responsible authority
+            through your case.
+        </p>
+
+    </div>
+
+
+</section>
+
 
 </body>
+
 </html>

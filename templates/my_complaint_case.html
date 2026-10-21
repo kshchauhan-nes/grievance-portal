@@ -1,0 +1,515 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Case {{ complaint.case_id }} | Grievance Portal</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            color: #222;
+        }
+
+        header {
+            background: #172554;
+            color: white;
+            padding: 18px 7%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h2 {
+            margin: 0;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-left: 18px;
+            font-size: 14px;
+        }
+
+        .container {
+            width: 86%;
+            max-width: 1100px;
+            margin: 30px auto;
+        }
+
+        .back {
+            display: inline-block;
+            margin-bottom: 18px;
+            color: #172554;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 3px 12px rgba(0,0,0,.06);
+        }
+
+        .top {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            align-items: flex-start;
+        }
+
+        .case-id {
+            color: #172554;
+            margin: 0 0 8px;
+        }
+
+        .status {
+            padding: 8px 14px;
+            border-radius: 20px;
+            background: #e8eefc;
+            color: #172554;
+            font-weight: bold;
+            font-size: 13px;
+            white-space: nowrap;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
+            margin-top: 22px;
+        }
+
+        .field {
+            background: #f8fafc;
+            padding: 14px;
+            border-radius: 8px;
+        }
+
+        .field strong {
+            display: block;
+            color: #64748b;
+            font-size: 12px;
+            margin-bottom: 5px;
+        }
+
+        .description {
+            white-space: pre-wrap;
+            line-height: 1.6;
+        }
+
+        .timeline {
+            border-left: 3px solid #dbe3f0;
+            padding-left: 22px;
+            margin-top: 20px;
+        }
+
+        .event {
+            position: relative;
+            margin-bottom: 24px;
+        }
+
+        .event::before {
+            content: "";
+            position: absolute;
+            left: -30px;
+            top: 4px;
+            width: 11px;
+            height: 11px;
+            border-radius: 50%;
+            background: #172554;
+        }
+
+        .event h4 {
+            margin: 0 0 5px;
+        }
+
+        .event p {
+            margin: 6px 0;
+            line-height: 1.5;
+        }
+
+        .event small,
+        .message small {
+            color: #64748b;
+        }
+
+        .message {
+            background: #f8fafc;
+            padding: 14px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+        }
+
+        .message.authority {
+            border-left: 4px solid #172554;
+        }
+
+        .message.user {
+            border-left: 4px solid #64748b;
+        }
+
+        .message strong {
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 110px;
+            padding: 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            resize: vertical;
+            font: inherit;
+        }
+
+        button {
+            margin-top: 10px;
+            padding: 11px 18px;
+            background: #172554;
+            color: white;
+            border: 0;
+            border-radius: 7px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            opacity: .9;
+        }
+
+        .privacy {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            padding: 16px;
+            border-radius: 9px;
+        }
+
+        .escalation {
+            background: #fff7ed;
+            border: 1px solid #fed7aa;
+            padding: 16px;
+            border-radius: 9px;
+        }
+
+        .escalation h3 {
+            margin-top: 0;
+        }
+
+        .empty {
+            color: #64748b;
+        }
+
+        @media (max-width: 800px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .top {
+                flex-direction: column;
+            }
+
+            header {
+                padding: 16px 5%;
+            }
+
+            nav a {
+                margin-left: 8px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h2>General Grievance Portal</h2>
+
+    <nav>
+        <a href="{{ url_for('home') }}">Home</a>
+        <a href="{{ url_for('my_complaints') }}">My Complaints</a>
+
+        <a href="{{ url_for('notifications_page') }}">
+            Notifications
+            {% if total_notification_count > 0 %}
+                ({{ total_notification_count }})
+            {% endif %}
+        </a>
+
+        <a href="{{ url_for('logout') }}">Logout</a>
+    </nav>
+</header>
+
+<div class="container">
+
+    <a class="back" href="{{ url_for('my_complaints') }}">
+        ← Back to My Complaints
+    </a>
+
+    <div class="card">
+
+        <div class="top">
+
+            <div>
+                <h1 class="case-id">
+                    {{ complaint.case_id }}
+                </h1>
+
+                <p>Grievance Case</p>
+            </div>
+
+            <span class="status">
+                {{ complaint.status }}
+            </span>
+
+        </div>
+
+        <div class="grid">
+
+            <div class="field">
+                <strong>Section</strong>
+                {{ organization_name }}
+            </div>
+
+            <div class="field">
+                <strong>Complaint Type</strong>
+                {{ complaint.complaint_type }}
+            </div>
+
+            <div class="field">
+                <strong>Category</strong>
+                {{ complaint.category }}
+            </div>
+
+            <div class="field">
+                <strong>Institution</strong>
+                {{ complaint.institution }}
+            </div>
+
+            <div class="field">
+                <strong>Unit / Department</strong>
+                {{ complaint.unit or "Not provided" }}
+            </div>
+
+            <div class="field">
+                <strong>Incident Date</strong>
+                {{ complaint.incident_date or "Not provided" }}
+            </div>
+
+            <div class="field">
+                <strong>Submitted</strong>
+                {{ complaint.created_at }}
+            </div>
+
+            <div class="field">
+                <strong>Privacy</strong>
+                {{ complaint.privacy_mode|capitalize }}
+            </div>
+
+        </div>
+    </div>
+
+    <div class="card">
+
+        <h2>Complaint Description</h2>
+
+        <p class="description">
+            {{ complaint.description }}
+        </p>
+
+    </div>
+
+    <div class="card">
+
+        <h2>Privacy Protection</h2>
+
+        <div class="privacy">
+
+            {% if complaint.privacy_mode == "confidential" %}
+
+                <strong>Confidential Identity</strong>
+
+                <p>
+                    Your identity is protected from the authority
+                    unless disclosure is authorized through the
+                    portal's disclosure process.
+                </p>
+
+            {% elif complaint.privacy_mode == "identified" %}
+
+                <strong>Identified Complaint</strong>
+
+                <p>
+                    Your identity has been shared with the
+                    authorized organization handling this case.
+                </p>
+
+            {% else %}
+
+                <strong>Protected Identity</strong>
+
+                <p>
+                    Your identity is protected.
+                </p>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+    {% if escalation_alerts %}
+
+        <div class="card">
+
+            <div class="escalation">
+
+                <h3>⚠ Escalation Activity</h3>
+
+                {% for alert in escalation_alerts %}
+
+                    <p>
+                        <strong>{{ alert.status }}</strong>
+                    </p>
+
+                    <p>
+                        {{ alert.message }}
+                    </p>
+
+                    <small>
+                        {{ alert.created_at }}
+                    </small>
+
+                    {% if not loop.last %}
+                        <hr>
+                    {% endif %}
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+    {% endif %}
+
+    <div class="card">
+
+        <h2>Case Timeline</h2>
+
+        {% if events %}
+
+            <div class="timeline">
+
+                {% for event in events %}
+
+                    <div class="event">
+
+                        <h4>
+                            {{ event.event_type }}
+                        </h4>
+
+                        <p>
+                            {{ event.description }}
+                        </p>
+
+                        <small>
+                            {{ event.created_at }}
+                        </small>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <p class="empty">
+                No case events yet.
+            </p>
+
+        {% endif %}
+
+    </div>
+
+    <div class="card">
+
+        <h2>Messages</h2>
+
+        {% if messages %}
+
+            {% for message in messages %}
+
+                <div class="message
+                    {% if message.sender_role == 'authority' %}
+                        authority
+                    {% else %}
+                        user
+                    {% endif %}
+                ">
+
+                    <strong>
+
+                        {% if message.sender_role == "authority" %}
+                            Authority
+                        {% else %}
+                            You
+                        {% endif %}
+
+                    </strong>
+
+                    <p>
+                        {{ message.message }}
+                    </p>
+
+                    <small>
+                        {{ message.created_at }}
+                    </small>
+
+                </div>
+
+            {% endfor %}
+
+        {% else %}
+
+            <p class="empty">
+                No messages yet.
+            </p>
+
+        {% endif %}
+
+        <form
+            method="POST"
+            action="{{ url_for('complainant_send_message', case_id=complaint.case_id) }}"
+        >
+
+            <textarea
+                name="message"
+                maxlength="2000"
+                placeholder="Write a message to the authority..."
+                required
+            ></textarea>
+
+            <button type="submit">
+                Send Message
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+</body>
+</html>
+```

@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Register | General Grievance Portal</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    >
+
+    <style>
+
+        .register-page {
+            max-width: 650px;
+            margin: 45px auto;
+            padding: 0 20px 60px;
+        }
+
+        .register-card {
+            margin-top: 25px;
+            padding: 28px;
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 14px;
+        }
+
+        .register-card label {
+            display: block;
+            margin-bottom: 7px;
+            font-weight: 600;
+        }
+
+        .register-card input,
+        .register-card select {
+            width: 100%;
+            padding: 12px 13px;
+            margin-bottom: 18px;
+            border: 1px solid #d1d5db;
+            border-radius: 9px;
+            font: inherit;
+            box-sizing: border-box;
+        }
+
+        .error-message {
+            margin-bottom: 20px;
+            padding: 13px;
+            border-radius: 9px;
+            background: #fef2f2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+
+        .login-link {
+            margin-top: 20px;
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .login-link a {
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<header>
+
+    <nav>
+
+        <div class="logo">
+            General Grievance Portal
+        </div>
+
+
+        <div class="nav-links">
+
+            <a href="{{ url_for('home') }}">
+                Home
+            </a>
+
+            <a href="{{ url_for('login') }}">
+                Login
+            </a>
+
+        </div>
+
+    </nav>
+
+</header>
+
+
+<main>
+
+<section class="register-page">
+
+    <p class="tagline">
+        CREATE ACCOUNT
+    </p>
+
+
+    <h1>
+        Register
+    </h1>
+
+
+    <p class="description">
+        Create an account to submit and track your grievances.
+    </p>
+
+
+    <div class="register-card">
+
+        {% if error %}
+
+            <div class="error-message">
+                {{ error }}
+            </div>
+
+        {% endif %}
+
+
+        <form method="POST">
+
+            <label for="full_name">
+                Full Name
+            </label>
+
+            <input
+                id="full_name"
+                type="text"
+                name="full_name"
+                required
+            >
+
+
+            <label for="email">
+                Email
+            </label>
+
+            <input
+                id="email"
+                type="email"
+                name="email"
+            >
+
+
+            <label for="phone">
+                Phone
+            </label>
+
+            <input
+                id="phone"
+                type="tel"
+                name="phone"
+            >
+
+
+            <label for="username">
+                Username
+            </label>
+
+            <input
+                id="username"
+                type="text"
+                name="username"
+                required
+            >
+
+
+            <label for="password">
+                Password
+            </label>
+
+            <input
+                id="password"
+                type="password"
+                name="password"
+                required
+            >
+
+
+            <label for="organization_id">
+                Organization
+            </label>
+
+            <select
+                id="organization_id"
+                name="organization_id"
+                required
+            >
+
+                <option value="">
+                    Select Organization
+                </option>
+
+
+                {% for organization in organizations %}
+
+                    <option value="{{ organization['id'] }}">
+
+                        {{ organization['name'] }}
+                        - {{ organization['sector'] }}
+
+                    </option>
+
+                {% endfor %}
+
+            </select>
+
+
+            <button
+                type="submit"
+                class="primary-btn"
+            >
+                Create Account
+            </button>
+
+        </form>
+
+
+        <p class="login-link">
+
+            Already have an account?
+
+            <a href="{{ url_for('login') }}">
+                Login
+            </a>
+
+        </p>
+
+    </div>
+
+</section>
+
+</main>
+
+</body>
+
+</html>

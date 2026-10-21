@@ -2,194 +2,660 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Submit Grievance</title>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Submit Grievance | General Grievance Portal</title>
 
     <link rel="stylesheet"
           href="{{ url_for('static', filename='style.css') }}">
+
+    <style>
+
+        .section-info {
+            background: #f3f6ff;
+            border: 1px solid #dbe4ff;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0 25px;
+        }
+
+        .section-info strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .section-fields {
+            display: none;
+        }
+
+        .section-fields.active {
+            display: block;
+        }
+
+        .category-help {
+            color: #6b7280;
+            font-size: 13px;
+            margin-top: 5px;
+        }
+
+        .required {
+            color: #dc2626;
+        }
+
+    </style>
+
 </head>
 
 <body>
 
-    <header>
-        <nav>
+<header>
 
-            <div class="logo">
-                NCC Grievance Portal
+    <nav>
+
+        <div class="logo">
+            General Grievance Portal
+        </div>
+
+        <div class="nav-links">
+
+            <a href="/">
+                Home
+            </a>
+
+            <a href="/complaint">
+                Submit Grievance
+            </a>
+
+        </div>
+
+    </nav>
+
+</header>
+
+
+<main>
+
+<section class="complaint-page">
+
+    <p class="tagline">
+        NEW GRIEVANCE
+    </p>
+
+    <h1>
+        Submit a grievance
+    </h1>
+
+    <p class="description">
+        Select the section responsible for your concern
+        and provide the relevant details.
+    </p>
+
+
+    <form method="POST">
+
+
+        <!-- =================================================
+             COMPLAINT TYPE
+             ================================================= -->
+
+        <h2>
+            Complaint Type
+        </h2>
+
+        <div class="choice-container">
+
+            <label class="choice">
+
+                <input type="radio"
+                       name="complaint_type"
+                       value="Individual"
+                       checked>
+
+                <span>
+
+                    <strong>
+                        Individual
+                    </strong>
+
+                    <small>
+                        Concern primarily affecting one person.
+                    </small>
+
+                </span>
+
+            </label>
+
+
+            <label class="choice">
+
+                <input type="radio"
+                       name="complaint_type"
+                       value="Group">
+
+                <span>
+
+                    <strong>
+                        Group
+                    </strong>
+
+                    <small>
+                        Concern affecting multiple people.
+                    </small>
+
+                </span>
+
+            </label>
+
+        </div>
+
+
+        <!-- =================================================
+             SECTION
+             ================================================= -->
+
+        <h2>
+            Grievance Section
+        </h2>
+
+        <label>
+
+            Submit To <span class="required">*</span>
+
+            <select name="organization_id"
+                    id="organization_id"
+                    required>
+
+                <option value="">
+                    Select section
+                </option>
+
+                <option value="1"
+                        data-section="ncc">
+                    NCC
+                </option>
+
+                <option value="2"
+                        data-section="school">
+                    School
+                </option>
+
+                <option value="3"
+                        data-section="hospital">
+                    Hospital
+                </option>
+
+            </select>
+
+            <small>
+                Select the section responsible for handling
+                your grievance.
+            </small>
+
+        </label>
+
+
+        <div id="sectionInfo"
+             class="section-info">
+
+            <strong>
+                Select a section
+            </strong>
+
+            <span>
+                The relevant fields will appear here.
+            </span>
+
+        </div>
+
+
+        <!-- =================================================
+             INSTITUTION
+             ================================================= -->
+
+        <label>
+
+            Institution / Organization
+            <span class="required">*</span>
+
+            <input type="text"
+                   name="institution"
+                   id="institution"
+                   placeholder="Enter institution or organization"
+                   required>
+
+            <small id="institutionHelp">
+                Enter the institution related to the grievance.
+            </small>
+
+        </label>
+
+
+        <!-- =================================================
+             UNIT / DEPARTMENT
+             ================================================= -->
+
+        <label>
+
+            <span id="unitLabel">
+                Unit / Department
+            </span>
+
+            <input type="text"
+                   name="unit"
+                   id="unit"
+                   placeholder="Optional">
+
+            <small id="unitHelp">
+                Enter the relevant unit, department, class,
+                ward, or other area.
+            </small>
+
+        </label>
+
+
+        <!-- =================================================
+             CATEGORY
+             ================================================= -->
+
+        <label>
+
+            Complaint Category
+            <span class="required">*</span>
+
+            <select name="category"
+                    id="category"
+                    required>
+
+                <option value="">
+                    Select a section first
+                </option>
+
+            </select>
+
+            <div id="categoryHelp"
+                 class="category-help">
+
+                Categories will appear after selecting
+                a section.
+
             </div>
 
-            <div class="nav-links">
-                <a href="/">Home</a>
-                <a href="/complaint">Submit Grievance</a>
-            </div>
-
-        </nav>
-    </header>
+        </label>
 
 
-    <main>
+        <!-- =================================================
+             INCIDENT DATE
+             ================================================= -->
 
-        <section class="complaint-page">
+        <label>
 
-            <p class="tagline">
-                NEW GRIEVANCE
+            Incident Date
+
+            <input type="date"
+                   name="incident_date">
+
+        </label>
+
+
+        <!-- =================================================
+             DESCRIPTION
+             ================================================= -->
+
+        <label>
+
+            What happened?
+            <span class="required">*</span>
+
+            <textarea
+                name="description"
+                rows="8"
+                maxlength="5000"
+                placeholder="Describe the grievance factually..."
+                required></textarea>
+
+            <small>
+                Provide clear and relevant information.
+            </small>
+
+        </label>
+
+
+        <!-- =================================================
+             PRIVACY
+             ================================================= -->
+
+        <div class="privacy-note">
+
+            <strong>
+                Privacy reminder
+            </strong>
+
+            <p>
+                Only include information necessary to explain
+                the grievance. Avoid unnecessary personal
+                information about yourself or others.
             </p>
 
-            <h1>
-                Submit a grievance
-            </h1>
-
-            <p class="description">
-                Provide the details of the concern. You can submit
-                a complaint affecting an individual or a group.
-            </p>
+        </div>
 
 
-            <form method="POST">
+        <div class="form-group">
 
-                <h2>Complaint Type</h2>
+            <label for="privacy_mode">
 
-                <div class="choice-container">
+                Privacy Preference
+                <span class="required">*</span>
 
-                    <label class="choice">
-                        <input type="radio"
-                               name="complaint_type"
-                               value="Individual"
-                               checked>
+            </label>
 
-                        <span>
-                            <strong>Individual</strong>
-                            <small>
-                                Concern primarily affecting one cadet.
-                            </small>
-                        </span>
-                    </label>
+            <select
+                id="privacy_mode"
+                name="privacy_mode"
+                required
+            >
 
+                <option value="">
+                    Select privacy preference
+                </option>
 
-                    <label class="choice">
-                        <input type="radio"
-                               name="complaint_type"
-                               value="Group">
+                <option value="confidential">
+                    Confidential — Keep my identity protected
+                </option>
 
-                        <span>
-                            <strong>Group</strong>
-                            <small>
-                                Concern affecting multiple cadets.
-                            </small>
-                        </span>
-                    </label>
+                <option value="identified">
+                    Identified — Allow authority to see my identity
+                </option>
 
-                </div>
+            </select>
 
+            <small>
+                Your choice determines how your identity is
+                handled during grievance processing.
+            </small>
 
-                <h2>NCC Information</h2>
-
-                <label>
-                    College / Institution *
-
-                    <input type="text"
-                           name="institution"
-                           placeholder="Enter your college"
-                           required>
-                </label>
+        </div>
 
 
-                <label>
-                    NCC Unit / Battalion
+        <!-- =================================================
+             SUBMIT
+             ================================================= -->
 
-                    <input type="text"
-                           name="unit"
-                           placeholder="Optional">
-                </label>
+        <button type="submit"
+                class="primary-btn">
 
+            Submit Grievance
 
-                <label>
-                    Complaint Category *
+        </button>
 
-                    <select name="category" required>
+    </form>
 
-                        <option value="">
-                            Select a category
-                        </option>
+</section>
 
-                        <option>
-                            Unfair treatment
-                        </option>
-
-                        <option>
-                            Misuse of authority
-                        </option>
-
-                        <option>
-                            Attendance / training concern
-                        </option>
-
-                        <option>
-                            Harassment or intimidation
-                        </option>
-
-                        <option>
-                            Disciplinary concern
-                        </option>
-
-                        <option>
-                            Camp-related concern
-                        </option>
-
-                        <option>
-                            Other NCC grievance
-                        </option>
-
-                    </select>
-
-                </label>
+</main>
 
 
-                <label>
-                    Incident Date
+<script>
 
-                    <input type="date"
-                           name="incident_date">
-                </label>
+    const organizationSelect =
+        document.getElementById("organization_id");
 
+    const sectionInfo =
+        document.getElementById("sectionInfo");
 
-                <label>
-                    What happened? *
+    const institutionInput =
+        document.getElementById("institution");
 
-                    <textarea
-                        name="description"
-                        rows="8"
-                        placeholder="Describe the incident factually..."
-                        required></textarea>
+    const institutionHelp =
+        document.getElementById("institutionHelp");
 
-                </label>
+    const unitLabel =
+        document.getElementById("unitLabel");
 
+    const unitInput =
+        document.getElementById("unit");
 
-                <div class="privacy-note">
+    const unitHelp =
+        document.getElementById("unitHelp");
 
-                    <strong>Privacy reminder</strong>
+    const categorySelect =
+        document.getElementById("category");
 
-                    <p>
-                        Only include information necessary to explain
-                        the grievance. Avoid unnecessary personal
-                        information about yourself or others.
-                    </p>
-
-                </div>
+    const categoryHelp =
+        document.getElementById("categoryHelp");
 
 
-                <button type="submit"
-                        class="primary-btn">
-                    Submit Grievance
-                </button>
+    const sectionData = {
 
-            </form>
+        ncc: {
 
-        </section>
+            title: "NCC Grievance",
 
-    </main>
+            description:
+                "For concerns related to NCC training, administration, camps, units, or conduct.",
+
+            institution:
+                "NCC Institution / Unit",
+
+            institutionPlaceholder:
+                "Enter college, institution, or NCC unit",
+
+            unit:
+                "Unit / Battalion",
+
+            unitPlaceholder:
+                "Enter unit, battalion, or company",
+
+            unitHelp:
+                "Enter the relevant NCC unit, battalion, company, or group.",
+
+            categories: [
+
+                "Training concern",
+                "Attendance concern",
+                "Unfair treatment",
+                "Misuse of authority",
+                "Harassment or intimidation",
+                "Disciplinary concern",
+                "Camp-related concern",
+                "Administrative concern",
+                "Other"
+
+            ]
+
+        },
+
+
+        school: {
+
+            title: "School Grievance",
+
+            description:
+                "For concerns related to academics, staff, students, facilities, discipline, or school administration.",
+
+            institution:
+                "School / Institution",
+
+            institutionPlaceholder:
+                "Enter school or institution name",
+
+            unit:
+                "Class / Department",
+
+            unitPlaceholder:
+                "Enter class, department, or section",
+
+            unitHelp:
+                "Enter the relevant class, department, section, or school area.",
+
+            categories: [
+
+                "Academic concern",
+                "Teacher / Staff concern",
+                "Student concern",
+                "Unfair treatment",
+                "Harassment or intimidation",
+                "Disciplinary concern",
+                "Infrastructure / Facilities",
+                "Administrative concern",
+                "Other"
+
+            ]
+
+        },
+
+
+        hospital: {
+
+            title: "Hospital Grievance",
+
+            description:
+                "For concerns related to medical services, staff, facilities, administration, or patient services.",
+
+            institution:
+                "Hospital / Healthcare Institution",
+
+            institutionPlaceholder:
+                "Enter hospital or healthcare institution",
+
+            unit:
+                "Department / Ward",
+
+            unitPlaceholder:
+                "Enter department, ward, or service area",
+
+            unitHelp:
+                "Enter the relevant department, ward, clinic, or service area.",
+
+            categories: [
+
+                "Medical service concern",
+                "Doctor / Staff concern",
+                "Patient service",
+                "Unfair treatment",
+                "Harassment or intimidation",
+                "Waiting time",
+                "Infrastructure / Facilities",
+                "Administrative concern",
+                "Other"
+
+            ]
+
+        }
+
+    };
+
+
+    function updateSection() {
+
+        const selected =
+            organizationSelect.options[
+                organizationSelect.selectedIndex
+            ];
+
+        const section =
+            selected.dataset.section;
+
+
+        if (!section || !sectionData[section]) {
+
+            sectionInfo.innerHTML = `
+                <strong>Select a section</strong>
+                <span>
+                    The relevant fields will appear here.
+                </span>
+            `;
+
+            institutionInput.placeholder =
+                "Enter institution or organization";
+
+            institutionHelp.textContent =
+                "Enter the institution related to the grievance.";
+
+            unitLabel.textContent =
+                "Unit / Department";
+
+            unitInput.placeholder =
+                "Optional";
+
+            unitHelp.textContent =
+                "Enter the relevant unit, department, class, ward, or other area.";
+
+            categorySelect.innerHTML = `
+                <option value="">
+                    Select a section first
+                </option>
+            `;
+
+            categoryHelp.textContent =
+                "Categories will appear after selecting a section.";
+
+            return;
+        }
+
+
+        const data =
+            sectionData[section];
+
+
+        sectionInfo.innerHTML = `
+            <strong>${data.title}</strong>
+            <span>${data.description}</span>
+        `;
+
+
+        institutionInput.placeholder =
+            data.institutionPlaceholder;
+
+        institutionHelp.textContent =
+            `Enter the ${data.institution.toLowerCase()} related to the grievance.`;
+
+
+        unitLabel.textContent =
+            data.unit;
+
+        unitInput.placeholder =
+            data.unitPlaceholder;
+
+        unitHelp.textContent =
+            data.unitHelp;
+
+
+        categorySelect.innerHTML = `
+            <option value="">
+                Select a category
+            </option>
+        `;
+
+
+        data.categories.forEach(function(category) {
+
+            const option =
+                document.createElement("option");
+
+            option.value = category;
+            option.textContent = category;
+
+            categorySelect.appendChild(option);
+
+        });
+
+
+        categoryHelp.textContent =
+            `Select the category that best describes your ${section} grievance.`;
+
+    }
+
+
+    organizationSelect.addEventListener(
+        "change",
+        updateSection
+    );
+
+</script>
 
 </body>
 

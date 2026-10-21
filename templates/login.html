@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Login | General Grievance Portal</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    >
+
+</head>
+
+
+<body>
+
+<header>
+
+    <nav>
+
+        <div class="logo">
+            General Grievance Portal
+        </div>
+
+
+        <div class="nav-links">
+
+            <a href="{{ url_for('home') }}">
+                Home
+            </a>
+
+            <a href="{{ url_for('register') }}">
+                Register
+            </a>
+
+        </div>
+
+    </nav>
+
+</header>
+
+
+<main>
+
+    <section class="complaint-page">
+
+        <p class="tagline">
+            ACCOUNT LOGIN
+        </p>
+
+
+        <h1>
+            Login
+        </h1>
+
+
+        <p class="description">
+            Access your grievance portal account.
+        </p>
+
+
+        {% if error %}
+
+            <div class="privacy-note">
+                {{ error }}
+            </div>
+
+        {% endif %}
+
+
+        <form method="POST">
+
+            <label>
+
+                Username
+
+                <input
+                    type="text"
+                    name="username"
+                    required
+                >
+
+            </label>
+
+
+            <label>
+
+                Password
+
+                <input
+                    type="password"
+                    name="password"
+                    required
+                >
+
+            </label>
+
+
+            <button
+                type="submit"
+                class="primary-btn"
+            >
+                Login
+            </button>
+
+        </form>
+
+    </section>
+
+</main>
+
+</body>
+
+</html>

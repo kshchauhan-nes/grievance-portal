@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Authority Dashboard - General Grievance Portal</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            color: #1f2937;
+        }
+
+        nav {
+            background: #0f172a;
+            padding: 16px 7%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .logo {
+            color: white;
+            font-size: 21px;
+            font-weight: bold;
+        }
+
+        .links {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        nav a {
+            color: #e2e8f0;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        nav a:hover {
+            color: white;
+        }
+
+        .badge {
+            display: inline-block;
+            min-width: 20px;
+            padding: 2px 6px;
+            margin-left: 5px;
+            border-radius: 10px;
+            background: #dc2626;
+            color: white;
+            font-size: 12px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .container {
+            width: 86%;
+            max-width: 1200px;
+            margin: 40px auto;
+        }
+
+        .header {
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #0f172a;
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            color: #64748b;
+        }
+
+        .notification {
+            display: inline-block;
+            margin-top: 14px;
+            padding: 9px 14px;
+            border-radius: 8px;
+            background: #fee2e2;
+            color: #991b1b;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns:
+                repeat(auto-fit, minmax(180px, 1fr));
+            gap: 18px;
+            margin-bottom: 30px;
+        }
+
+        .stat {
+            background: white;
+            padding: 22px;
+            border-radius: 14px;
+            box-shadow:
+                0 4px 18px rgba(15, 23, 42, 0.06);
+        }
+
+        .stat h3 {
+            color: #64748b;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .stat strong {
+            color: #0f172a;
+            font-size: 30px;
+        }
+
+        .section-title {
+            font-size: 22px;
+            color: #0f172a;
+            margin-bottom: 18px;
+        }
+
+        /* FILTERS */
+
+        .filters {
+            background: white;
+            padding: 20px;
+            border-radius: 14px;
+            margin-bottom: 24px;
+            box-shadow:
+                0 4px 18px rgba(15, 23, 42, 0.06);
+
+            display: grid;
+            grid-template-columns:
+                2fr 1fr 1fr auto;
+            gap: 12px;
+        }
+
+        .filters input,
+        .filters select {
+            width: 100%;
+            padding: 11px 13px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            background: white;
+        }
+
+        .filters input:focus,
+        .filters select:focus {
+            border-color: #2563eb;
+        }
+
+        .clear-btn {
+            padding: 11px 16px;
+            border: none;
+            border-radius: 8px;
+            background: #e2e8f0;
+            color: #334155;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .clear-btn:hover {
+            background: #cbd5e1;
+        }
+
+        .filter-info {
+            margin-top: 10px;
+            color: #64748b;
+            font-size: 13px;
+        }
+
+        .cases {
+            display: grid;
+            grid-template-columns:
+                repeat(auto-fit, minmax(290px, 1fr));
+            gap: 20px;
+        }
+
+        .case-card {
+            background: white;
+            padding: 22px;
+            border-radius: 14px;
+            box-shadow:
+                0 4px 18px rgba(15, 23, 42, 0.06);
+            border-left: 5px solid #2563eb;
+        }
+
+        .case-card.unread {
+            border-left-color: #dc2626;
+        }
+
+        .case-card.hidden {
+            display: none;
+        }
+
+        .case-id {
+            font-size: 18px;
+            font-weight: bold;
+            color: #0f172a;
+            margin-bottom: 12px;
+        }
+
+        .detail {
+            margin: 8px 0;
+            font-size: 14px;
+        }
+
+        .label {
+            font-weight: bold;
+            color: #475569;
+        }
+
+        .status {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 6px 11px;
+            border-radius: 20px;
+            background: #dbeafe;
+            color: #1d4ed8;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .unread-label {
+            display: inline-block;
+            margin-left: 7px;
+            padding: 5px 9px;
+            border-radius: 15px;
+            background: #fee2e2;
+            color: #b91c1c;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .actions {
+            margin-top: 18px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 17px;
+            background: #2563eb;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .btn:hover {
+            background: #1d4ed8;
+        }
+
+        .empty {
+            background: white;
+            padding: 40px;
+            border-radius: 14px;
+            text-align: center;
+            color: #64748b;
+        }
+
+        #noResults {
+            display: none;
+            background: white;
+            padding: 40px;
+            border-radius: 14px;
+            text-align: center;
+            color: #64748b;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 800px) {
+
+            .filters {
+                grid-template-columns: 1fr 1fr;
+            }
+
+        }
+
+        @media (max-width: 600px) {
+
+            .container {
+                width: 92%;
+                margin: 30px auto;
+            }
+
+            nav {
+                padding: 15px 4%;
+            }
+
+            .header h1 {
+                font-size: 27px;
+            }
+
+            .filters {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<nav>
+
+    <div class="logo">
+        General Grievance Portal
+    </div>
+
+
+    <div class="links">
+
+        <a href="{{ url_for('home') }}">
+            Home
+        </a>
+
+
+        <a href="{{ url_for('authority_dashboard') }}">
+
+            Dashboard
+
+            {% if unread_message_count > 0 %}
+
+                <span class="badge">
+                    {{ unread_message_count }}
+                </span>
+
+            {% endif %}
+
+        </a>
+
+
+        <a href="{{ url_for('track') }}">
+            Track Case
+        </a>
+
+
+        <a href="{{ url_for('notifications') }}">
+
+            🔔
+
+            {% if unread_message_count > 0 %}
+
+                <span class="badge">
+                    {{ unread_message_count }}
+                </span>
+
+            {% endif %}
+
+        </a>
+
+
+        <a href="{{ url_for('logout') }}">
+            Logout
+        </a>
+
+    </div>
+
+</nav>
+
+
+<div class="container">
+
+    <div class="header">
+
+        <h1>
+            Authority Dashboard
+        </h1>
+
+        <p>
+            Manage and review grievances submitted
+            to your organization.
+        </p>
+
+
+        {% if unread_message_count > 0 %}
+
+            <div class="notification">
+
+                {{ unread_message_count }}
+
+                unread message{% if unread_message_count != 1 %}s{% endif %}
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- STATS -->
+
+    <div class="stats">
+
+        <div class="stat">
+
+            <h3>
+                Total Cases
+            </h3>
+
+            <strong>
+                {{ stats.total }}
+            </strong>
+
+        </div>
+
+
+        <div class="stat">
+
+            <h3>
+                Pending
+            </h3>
+
+            <strong>
+                {{ stats.pending }}
+            </strong>
+
+        </div>
+
+
+        <div class="stat">
+
+            <h3>
+                In Progress
+            </h3>
+
+            <strong>
+                {{ stats.in_progress }}
+            </strong>
+
+        </div>
+
+
+        <div class="stat">
+
+            <h3>
+                Resolved
+            </h3>
+
+            <strong>
+                {{ stats.resolved }}
+            </strong>
+
+        </div>
+
+
+        <div class="stat">
+
+            <h3>
+                Escalated
+            </h3>
+
+            <strong>
+                {{ stats.escalated }}
+            </strong>
+
+        </div>
+
+    </div>
+
+
+    <h2 class="section-title">
+        Cases
+    </h2>
+
+
+    <!-- FILTERS -->
+
+    {% if complaints %}
+
+        <div class="filters">
+
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="Search Case ID..."
+            >
+
+
+            <select id="statusFilter">
+
+                <option value="">
+                    All Statuses
+                </option>
+
+                <option value="Submitted">
+                    Submitted
+                </option>
+
+                <option value="Under Review">
+                    Under Review
+                </option>
+
+                <option value="In Progress">
+                    In Progress
+                </option>
+
+                <option value="Escalated">
+                    Escalated
+                </option>
+
+                <option value="Resolved">
+                    Resolved
+                </option>
+
+                <option value="Closed">
+                    Closed
+                </option>
+
+            </select>
+
+
+            <select id="categoryFilter">
+
+                <option value="">
+                    All Categories
+                </option>
+
+                {% set categories = [] %}
+
+                {% for complaint in complaints %}
+
+                    {% if complaint['category'] not in categories %}
+
+                        {% set _ = categories.append(
+                            complaint['category']
+                        ) %}
+
+                        <option
+                            value="{{ complaint['category'] }}"
+                        >
+                            {{ complaint['category'] }}
+                        </option>
+
+                    {% endif %}
+
+                {% endfor %}
+
+            </select>
+
+
+            <button
+                type="button"
+                class="clear-btn"
+                onclick="clearFilters()"
+            >
+                Clear
+            </button>
+
+        </div>
+
+
+        <div class="filter-info">
+
+            Showing
+            <strong id="resultCount">
+                {{ complaints|length }}
+            </strong>
+            case(s)
+
+        </div>
+
+
+        <div class="cases" id="casesContainer">
+
+            {% for complaint in complaints %}
+
+                <div
+                    class="
+                        case-card
+                        {% if complaint.get('unread_count', 0) > 0 %}
+                            unread
+                        {% endif %}
+                    "
+                    data-case-id="{{ complaint['case_id']|lower }}"
+                    data-status="{{ complaint['status'] }}"
+                    data-category="{{ complaint['category'] }}"
+                >
+
+                    <div class="case-id">
+                        {{ complaint['case_id'] }}
+                    </div>
+
+
+                    <div class="detail">
+
+                        <span class="label">
+                            Category:
+                        </span>
+
+                        {{ complaint['category'] }}
+
+                    </div>
+
+
+                    <div class="detail">
+
+                        <span class="label">
+                            Submitted:
+                        </span>
+
+                        {{ complaint['created_at'] }}
+
+                    </div>
+
+
+                    <div>
+
+                        <span class="status">
+                            {{ complaint['status'] }}
+                        </span>
+
+
+                        {% if complaint.get('unread_count', 0) > 0 %}
+
+                            <span class="unread-label">
+
+                                {{ complaint['unread_count'] }}
+
+                                new
+
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <div class="actions">
+
+                        <a
+                            href="{{ url_for(
+                                'authority_case',
+                                case_id=complaint['case_id']
+                            ) }}"
+                            class="btn"
+                        >
+                            Open Case
+                        </a>
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+
+        <div id="noResults">
+
+            No matching grievances found.
+
+        </div>
+
+    {% else %}
+
+        <div class="empty">
+            No grievances have been submitted yet.
+        </div>
+
+    {% endif %}
+
+</div>
+
+
+<script>
+
+    const searchInput =
+        document.getElementById("searchInput");
+
+    const statusFilter =
+        document.getElementById("statusFilter");
+
+    const categoryFilter =
+        document.getElementById("categoryFilter");
+
+    const resultCount =
+        document.getElementById("resultCount");
+
+    const noResults =
+        document.getElementById("noResults");
+
+
+    function filterCases() {
+
+        const search =
+            searchInput.value
+                .trim()
+                .toLowerCase();
+
+        const status =
+            statusFilter.value;
+
+        const category =
+            categoryFilter.value;
+
+        const cards =
+            document.querySelectorAll(".case-card");
+
+        let visible = 0;
+
+
+        cards.forEach(card => {
+
+            const caseId =
+                card.dataset.caseId;
+
+            const cardStatus =
+                card.dataset.status;
+
+            const cardCategory =
+                card.dataset.category;
+
+
+            const matchesSearch =
+                !search ||
+                caseId.includes(search);
+
+
+            const matchesStatus =
+                !status ||
+                cardStatus === status;
+
+
+            const matchesCategory =
+                !category ||
+                cardCategory === category;
+
+
+            if (
+                matchesSearch &&
+                matchesStatus &&
+                matchesCategory
+            ) {
+
+                card.classList.remove("hidden");
+
+                visible++;
+
+            } else {
+
+                card.classList.add("hidden");
+
+            }
+
+        });
+
+
+        if (resultCount) {
+            resultCount.textContent = visible;
+        }
+
+
+        if (noResults) {
+
+            noResults.style.display =
+                visible === 0
+                    ? "block"
+                    : "none";
+
+        }
+
+    }
+
+
+    function clearFilters() {
+
+        searchInput.value = "";
+        statusFilter.value = "";
+        categoryFilter.value = "";
+
+        filterCases();
+
+    }
+
+
+    if (searchInput) {
+
+        searchInput.addEventListener(
+            "input",
+            filterCases
+        );
+
+    }
+
+
+    if (statusFilter) {
+
+        statusFilter.addEventListener(
+            "change",
+            filterCases
+        );
+
+    }
+
+
+    if (categoryFilter) {
+
+        categoryFilter.addEventListener(
+            "change",
+            filterCases
+        );
+
+    }
+
+</script>
+
+</body>
+
+</html>

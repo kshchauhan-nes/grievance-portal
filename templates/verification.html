@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verification | General Grievance Portal</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            color: #172033;
+        }
+        nav {
+            background: #172554;
+            padding: 16px 7%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+        }
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-left: 18px;
+        }
+        .brand { font-size: 20px; font-weight: bold; }
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        .card {
+            background: white;
+            padding: 28px;
+            border-radius: 14px;
+            box-shadow: 0 5px 20px rgba(0,0,0,.07);
+            margin-bottom: 24px;
+        }
+        h1 { margin-top: 0; }
+        label {
+            display: block;
+            margin: 16px 0 7px;
+            font-weight: bold;
+        }
+        select, button {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #ccd3df;
+            font-size: 15px;
+        }
+        button {
+            margin-top: 20px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        button:hover { opacity: .9; }
+        .error {
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        .verification {
+            border: 1px solid #e1e6ef;
+            border-radius: 10px;
+            padding: 18px;
+            margin-top: 14px;
+        }
+        .status {
+            font-weight: bold;
+            margin-top: 8px;
+        }
+        .pending { color: #b45309; }
+        .verified { color: #15803d; }
+        .rejected { color: #b91c1c; }
+        .note {
+            color: #667085;
+            line-height: 1.6;
+            font-size: 14px;
+        }
+        footer {
+            text-align: center;
+            color: #667085;
+            padding: 30px;
+        }
+    </style>
+</head>
+
+<body>
+
+<nav>
+    <div class="brand">General Grievance Portal</div>
+    <div>
+        <a href="{{ url_for('home') }}">Home</a>
+        <a href="{{ url_for('my_complaints') }}">My Complaints</a>
+        <a href="{{ url_for('notifications_page') }}">Notifications</a>
+        <a href="{{ url_for('logout') }}">Logout</a>
+    </div>
+</nav>
+
+<div class="container">
+
+```
+<div class="card">
+    <h1>Identity Verification</h1>
+
+    <p class="note">
+        Verification helps an organization confirm your identity
+        when required for confidential grievance handling.
+    </p>
+
+    {% if error %}
+        <div class="error">{{ error }}</div>
+    {% endif %}
+
+    <form method="POST" action="{{ url_for('verification') }}">
+
+        <label for="organization_id">Organization</label>
+        <select id="organization_id" name="organization_id" required>
+            <option value="">Select organization</option>
+
+            {% for organization in organizations %}
+                <option value="{{ organization.id }}">
+                    {{ organization.name }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <label for="verification_method">Verification Method</label>
+        <select id="verification_method"
+                name="verification_method"
+                required>
+            <option value="">Select method</option>
+            <option value="Institutional ID">
+                Institutional ID
+            </option>
+            <option value="Official Email">
+                Official Email
+            </option>
+            <option value="Document Verification">
+                Document Verification
+            </option>
+        </select>
+
+        <button type="submit">
+            Submit Verification Request
+        </button>
+    </form>
+</div>
+
+<div class="card">
+    <h2>My Verification Requests</h2>
+
+    {% if verifications %}
+
+        {% for verification in verifications %}
+            <div class="verification">
+
+                <strong>
+                    {{ verification.organization_name }}
+                </strong>
+
+                <div>
+                    Method:
+                    {{ verification.verification_method }}
+                </div>
+
+                <div class="status
+                    {% if verification.verification_status == 'Pending' %}
+                        pending
+                    {% elif verification.verification_status == 'Verified' %}
+                        verified
+                    {% else %}
+                        rejected
+                    {% endif %}">
+                    {{ verification.verification_status }}
+                </div>
+
+                {% if verification.verified_at %}
+                    <div>
+                        Verified:
+                        {{ verification.verified_at }}
+                    </div>
+                {% endif %}
+
+                <div class="note">
+                    Submitted: {{ verification.created_at }}
+                </div>
+
+            </div>
+        {% endfor %}
+
+    {% else %}
+
+        <p class="note">
+            No verification requests yet.
+        </p>
+
+    {% endif %}
+</div>
+```
+
+</div>
+
+<footer>
+    General Grievance Portal
+</footer>
+
+</body>
+</html>

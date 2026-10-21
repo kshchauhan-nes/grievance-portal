@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Notifications | General Grievance Portal
+    </title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            color: #1f2937;
+        }
+
+        nav {
+            background: #111827;
+            color: white;
+            padding: 16px 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        nav .brand {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        nav .links {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            flex-wrap: wrap;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        nav a:hover {
+            opacity: 0.8;
+        }
+
+        .notification-link {
+            position: relative;
+        }
+
+        .badge {
+            position: absolute;
+            top: -9px;
+            right: -12px;
+            background: #ef4444;
+            color: white;
+            border-radius: 999px;
+            min-width: 18px;
+            height: 18px;
+            padding: 2px 5px;
+            font-size: 11px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .container {
+            width: 92%;
+            max-width: 950px;
+            margin: 40px auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 25px;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 30px;
+        }
+
+        .header p {
+            color: #6b7280;
+            margin: 7px 0 0;
+        }
+
+        .mark-all {
+            border: none;
+            background: #2563eb;
+            color: white;
+            padding: 10px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .mark-all:hover {
+            background: #1d4ed8;
+        }
+
+        .notification-card {
+            background: white;
+            border-radius: 14px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+            border-left: 5px solid #2563eb;
+        }
+
+        .notification-card.escalation {
+            border-left-color: #dc2626;
+        }
+
+        .notification-card.status {
+            border-left-color: #7c3aed;
+        }
+
+        .notification-card.message {
+            border-left-color: #059669;
+        }
+
+        .notification-top {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            align-items: flex-start;
+        }
+
+        .notification-title {
+            font-size: 17px;
+            font-weight: bold;
+            margin-bottom: 7px;
+        }
+
+        .notification-message {
+            color: #4b5563;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .notification-time {
+            color: #9ca3af;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+
+        .case-link {
+            display: inline-block;
+            margin-top: 12px;
+            color: #2563eb;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .case-link:hover {
+            text-decoration: underline;
+        }
+
+        .read-button {
+            margin-top: 15px;
+            border: 1px solid #d1d5db;
+            background: white;
+            color: #374151;
+            padding: 7px 12px;
+            border-radius: 7px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .read-button:hover {
+            background: #f3f4f6;
+        }
+
+        .empty {
+            background: white;
+            border-radius: 14px;
+            padding: 55px 25px;
+            text-align: center;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+        }
+
+        .empty-icon {
+            font-size: 45px;
+            margin-bottom: 12px;
+        }
+
+        .empty h2 {
+            margin: 0 0 8px;
+        }
+
+        .empty p {
+            color: #6b7280;
+            margin: 0;
+        }
+
+        @media (max-width: 600px) {
+
+            nav {
+                padding: 15px;
+            }
+
+            .container {
+                width: 94%;
+                margin: 25px auto;
+            }
+
+            h1 {
+                font-size: 25px;
+            }
+
+            .notification-top {
+                flex-direction: column;
+            }
+
+            .notification-time {
+                white-space: normal;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<nav>
+
+    <div class="brand">
+        General Grievance Portal
+    </div>
+
+
+    <div class="links">
+
+        <a href="{{ url_for('home') }}">
+            Home
+        </a>
+
+
+        {% if session.get('role') == 'authority' %}
+
+            <a href="{{ url_for('authority_dashboard') }}">
+                Dashboard
+            </a>
+
+        {% else %}
+
+            <a href="{{ url_for('my_complaints') }}">
+                My Complaints
+            </a>
+
+        {% endif %}
+
+
+        <a href="{{ url_for('track') }}">
+            Track Case
+        </a>
+
+
+        <a
+            href="{{ url_for('notifications_page') }}"
+            class="notification-link"
+        >
+
+            🔔
+
+            {% if total_notification_count > 0 %}
+
+                <span class="badge">
+                    {{ total_notification_count }}
+                </span>
+
+            {% endif %}
+
+        </a>
+
+
+        <a href="{{ url_for('logout') }}">
+            Logout
+        </a>
+
+    </div>
+
+</nav>
+
+
+<div class="container">
+
+    <div class="header">
+
+        <div>
+
+            <h1>
+                Notifications
+            </h1>
+
+            <p>
+                Stay updated about your grievance cases.
+            </p>
+
+        </div>
+
+
+        {% if notifications %}
+
+            <form
+                method="POST"
+                action="{{ url_for('mark_all_notifications_read') }}"
+            >
+
+                <button
+                    class="mark-all"
+                    type="submit"
+                >
+                    Mark All as Read
+                </button>
+
+            </form>
+
+        {% endif %}
+
+    </div>
+
+
+    {% if notifications %}
+
+        {% for notification in notifications %}
+
+            {% set notification_class = '' %}
+
+
+            {% if notification.notification_type == 'escalation_alert' %}
+
+                {% set notification_class = 'escalation' %}
+
+            {% elif notification.notification_type == 'status_change' %}
+
+                {% set notification_class = 'status' %}
+
+            {% elif notification.notification_type in [
+                'message',
+                'authority_message',
+                'complainant_message'
+            ] %}
+
+                {% set notification_class = 'message' %}
+
+            {% endif %}
+
+
+            <div class="notification-card {{ notification_class }}">
+
+                <div class="notification-top">
+
+                    <div>
+
+                        <div class="notification-title">
+
+                            {% if notification.notification_type == 'escalation_alert' %}
+
+                                🚨
+
+                            {% elif notification.notification_type == 'status_change' %}
+
+                                🔄
+
+                            {% elif notification.notification_type in [
+                                'message',
+                                'authority_message',
+                                'complainant_message'
+                            ] %}
+
+                                💬
+
+                            {% else %}
+
+                                🔔
+
+                            {% endif %}
+
+                            {{ notification.title }}
+
+                        </div>
+
+
+                        <div class="notification-message">
+                            {{ notification.message }}
+                        </div>
+
+                    </div>
+
+
+                    <div class="notification-time">
+                        {{ notification.created_at }}
+                    </div>
+
+                </div>
+
+
+                {% if notification.case_id %}
+
+                    {% if session.get('role') == 'authority' %}
+
+                        <a
+                            class="case-link"
+                            href="{{ url_for(
+                                'authority_case',
+                                case_id=notification.case_id
+                            ) }}"
+                        >
+                            Open Case →
+                        </a>
+
+                    {% else %}
+
+                        <a
+                            class="case-link"
+                            href="{{ url_for(
+                                'my_complaint_case',
+                                case_id=notification.case_id
+                            ) }}"
+                        >
+                            Open Case →
+                        </a>
+
+                    {% endif %}
+
+                {% endif %}
+
+
+                {% if notification.source == 'system' %}
+
+                    <form
+                        method="POST"
+                        action="{{ url_for(
+                            'mark_notification_read',
+                            notification_id=notification.id
+                        ) }}"
+                    >
+
+                        <button
+                            class="read-button"
+                            type="submit"
+                        >
+                            Mark as Read
+                        </button>
+
+                    </form>
+
+                {% endif %}
+
+            </div>
+
+        {% endfor %}
+
+
+    {% else %}
+
+        <div class="empty">
+
+            <div class="empty-icon">
+                ✓
+            </div>
+
+            <h2>
+                You're all caught up
+            </h2>
+
+            <p>
+                No new notifications right now.
+            </p>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+</body>
+
+</html>

@@ -5,15 +5,20 @@
 
     <meta charset="UTF-8">
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-    <title>Complaint Submitted</title>
+    <title>Grievance Submitted | General Grievance Portal</title>
 
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='style.css') }}">
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    >
 
 </head>
+
 
 <body>
 
@@ -22,12 +27,13 @@
     <nav>
 
         <div class="logo">
-            NCC Grievance Portal
+            General Grievance Portal
         </div>
+
 
         <div class="nav-links">
 
-            <a href="/">
+            <a href="{{ url_for('home') }}">
                 Home
             </a>
 
@@ -46,16 +52,19 @@
             ✓
         </div>
 
+
         <p class="tagline">
             CASE REGISTERED
         </p>
+
 
         <h1>
             Your grievance has been submitted.
         </h1>
 
+
         <p>
-            Your complaint has been registered successfully.
+            Your grievance has been registered successfully.
             Please save your Case ID for future tracking.
         </p>
 
@@ -66,6 +75,7 @@
                 YOUR CASE ID
             </span>
 
+
             <strong>
                 {{ case_id }}
             </strong>
@@ -75,18 +85,24 @@
 
         <div class="privacy-note">
 
-            <strong>Important</strong>
+            <strong>
+                Important
+            </strong>
+
 
             <p>
-                Keep your Case ID private. In the production
-                version, this ID will be used to access the
-                status and updates of your complaint.
+                Keep your Case ID private.
+                Use it to track your grievance
+                and view its updates.
             </p>
 
         </div>
 
 
-        <a href="/" class="primary-btn">
+        <a
+            href="{{ url_for('home') }}"
+            class="primary-btn"
+        >
             Return Home
         </a>
 

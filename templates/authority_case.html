@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Case {{ complaint.case_id }} | Grievance Portal</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            color: #222;
+        }
+
+        header {
+            background: #172554;
+            color: white;
+            padding: 18px 7%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h2 {
+            margin: 0;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-left: 20px;
+            font-size: 14px;
+        }
+
+        .container {
+            width: 86%;
+            max-width: 1100px;
+            margin: 30px auto;
+        }
+
+        .back {
+            display: inline-block;
+            margin-bottom: 18px;
+            color: #172554;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 3px 12px rgba(0,0,0,.07);
+        }
+
+        .top {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            align-items: flex-start;
+        }
+
+        .case-id {
+            color: #172554;
+            margin: 0 0 8px;
+        }
+
+        .status {
+            padding: 7px 13px;
+            border-radius: 20px;
+            background: #e8eefc;
+            color: #172554;
+            font-weight: bold;
+            font-size: 13px;
+            white-space: nowrap;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .field {
+            background: #f8fafc;
+            padding: 14px;
+            border-radius: 8px;
+        }
+
+        .field strong {
+            display: block;
+            font-size: 12px;
+            color: #64748b;
+            margin-bottom: 5px;
+        }
+
+        .description {
+            line-height: 1.6;
+            white-space: pre-wrap;
+        }
+
+        select,
+        textarea,
+        input {
+            width: 100%;
+            padding: 11px;
+            border: 1px solid #cbd5e1;
+            border-radius: 7px;
+            font: inherit;
+        }
+
+        textarea {
+            min-height: 110px;
+            resize: vertical;
+        }
+
+        button {
+            margin-top: 10px;
+            background: #172554;
+            color: white;
+            border: 0;
+            padding: 11px 18px;
+            border-radius: 7px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        button:hover {
+            opacity: .9;
+        }
+
+        .timeline {
+            border-left: 3px solid #dbe3f0;
+            padding-left: 20px;
+        }
+
+        .event {
+            margin-bottom: 22px;
+            position: relative;
+        }
+
+        .event::before {
+            content: "";
+            position: absolute;
+            left: -28px;
+            top: 3px;
+            width: 11px;
+            height: 11px;
+            border-radius: 50%;
+            background: #172554;
+        }
+
+        .event h4 {
+            margin: 0 0 5px;
+        }
+
+        .event small {
+            color: #64748b;
+        }
+
+        .message {
+            background: #f8fafc;
+            padding: 13px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+        }
+
+        .message strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .identity-box {
+            background: #fff7ed;
+            border: 1px solid #fed7aa;
+            padding: 16px;
+            border-radius: 9px;
+        }
+
+        .identity-box h3 {
+            margin-top: 0;
+        }
+
+        .success {
+            background: #ecfdf5;
+            border: 1px solid #a7f3d0;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        @media (max-width: 700px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .top {
+                flex-direction: column;
+            }
+
+            header {
+                padding: 16px 5%;
+            }
+
+            nav a {
+                margin-left: 8px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h2>General Grievance Portal</h2>
+
+    <nav>
+        <a href="{{ url_for('authority_dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('notifications_page') }}">Notifications</a>
+        <a href="{{ url_for('logout') }}">Logout</a>
+    </nav>
+</header>
+
+<div class="container">
+
+    <a class="back" href="{{ url_for('authority_dashboard') }}">
+        ← Back to Dashboard
+    </a>
+
+    {% if request.args.get('success') %}
+        <div class="success">
+            Action completed successfully.
+        </div>
+    {% endif %}
+
+    <div class="card">
+        <div class="top">
+            <div>
+                <h1 class="case-id">{{ complaint.case_id }}</h1>
+                <p>Grievance Case</p>
+            </div>
+
+            <span class="status">
+                {{ complaint.status }}
+            </span>
+        </div>
+
+        <div class="grid">
+            <div class="field">
+                <strong>Organization</strong>
+                {{ organization_name }}
+            </div>
+
+            <div class="field">
+                <strong>Complaint Type</strong>
+                {{ complaint.complaint_type }}
+            </div>
+
+            <div class="field">
+                <strong>Institution</strong>
+                {{ complaint.institution }}
+            </div>
+
+            <div class="field">
+                <strong>Unit / Department</strong>
+                {{ complaint.unit or "Not provided" }}
+            </div>
+
+            <div class="field">
+                <strong>Category</strong>
+                {{ complaint.category }}
+            </div>
+
+            <div class="field">
+                <strong>Incident Date</strong>
+                {{ complaint.incident_date or "Not provided" }}
+            </div>
+
+            <div class="field">
+                <strong>Submitted</strong>
+                {{ complaint.created_at }}
+            </div>
+
+            <div class="field">
+                <strong>Privacy Mode</strong>
+                {{ complaint.privacy_mode|capitalize }}
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Complaint Description</h2>
+
+        <p class="description">
+            {{ complaint.description }}
+        </p>
+    </div>
+
+    <div class="card">
+        <h2>Update Case Status</h2>
+
+        <form method="POST"
+              action="{{ url_for('authority_update_status', case_id=complaint.case_id) }}">
+
+            <select name="status" required>
+                <option value="">Select new status</option>
+
+                {% if complaint.status == "Submitted" %}
+                    <option>Under Review</option>
+                    <option>Escalated</option>
+
+                {% elif complaint.status == "Under Review" %}
+                    <option>In Progress</option>
+                    <option>Escalated</option>
+
+                {% elif complaint.status == "In Progress" %}
+                    <option>Resolved</option>
+                    <option>Escalated</option>
+
+                {% elif complaint.status == "Escalated" %}
+                    <option>Under Review</option>
+                    <option>In Progress</option>
+
+                {% elif complaint.status == "Resolved" %}
+                    <option>Closed</option>
+                {% endif %}
+            </select>
+
+            {% if complaint.status != "Closed" %}
+                <button type="submit">Update Status</button>
+            {% else %}
+                <p>This case is closed.</p>
+            {% endif %}
+        </form>
+    </div>
+
+    <div class="card">
+        <h2>Complainant Identity</h2>
+
+        {% if identity %}
+            <div class="identity-box">
+                <h3>Identity Available</h3>
+
+                <p><strong>Name:</strong> {{ identity.full_name }}</p>
+                <p><strong>Email:</strong> {{ identity.email }}</p>
+                <p><strong>Phone:</strong> {{ identity.phone }}</p>
+            </div>
+
+        {% elif complaint.privacy_mode == "confidential" and can_reveal_identity %}
+            <div class="identity-box">
+                <h3>Identity Protected</h3>
+
+                <p>
+                    The complainant selected confidential identity protection.
+                    Identity is hidden by default.
+                </p>
+
+                <form method="POST"
+                      action="{{ url_for('reveal_identity', case_id=complaint.case_id) }}">
+
+                    <input
+                        type="text"
+                        name="reason"
+                        maxlength="500"
+                        placeholder="Reason for identity disclosure"
+                        required
+                    >
+
+                    <button type="submit">
+                        Request Identity Disclosure
+                    </button>
+                </form>
+            </div>
+
+        {% else %}
+            <p>
+                Complainant identity is protected and cannot be displayed.
+            </p>
+        {% endif %}
+    </div>
+
+    <div class="card">
+        <h2>Case Timeline</h2>
+
+        {% if events %}
+            <div class="timeline">
+
+                {% for event in events %}
+                    <div class="event">
+                        <h4>{{ event.event_type }}</h4>
+
+                        <p>
+                            {{ event.description }}
+                        </p>
+
+                        <small>
+                            {{ event.created_at }}
+                        </small>
+                    </div>
+                {% endfor %}
+
+            </div>
+        {% else %}
+            <p>No case events yet.</p>
+        {% endif %}
+    </div>
+
+    <div class="card">
+        <h2>Messages</h2>
+
+        {% if messages %}
+
+            {% for message in messages %}
+                <div class="message">
+                    <strong>
+                        {% if message.sender_role == "authority" %}
+                            Authority
+                        {% else %}
+                            Complainant
+                        {% endif %}
+                    </strong>
+
+                    <p>{{ message.message }}</p>
+
+                    <small>{{ message.created_at }}</small>
+                </div>
+            {% endfor %}
+
+        {% else %}
+            <p>No messages yet.</p>
+        {% endif %}
+
+        <form method="POST"
+              action="{{ url_for('authority_send_message', case_id=complaint.case_id) }}">
+
+            <textarea
+                name="message"
+                maxlength="2000"
+                placeholder="Write a message to the complainant..."
+                required></textarea>
+
+            <button type="submit">
+                Send Message
+            </button>
+        </form>
+    </div>
+
+</div>
+
+</body>
+</html>
