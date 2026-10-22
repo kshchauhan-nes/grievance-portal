@@ -1,0 +1,92 @@
+name: Grievance Portal Tests
+
+on:
+  push:
+    branches: [development]
+  pull_request:
+    branches: [development]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  backend-tests:
+    name: Backend regression tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
+
+      - name: Check Python syntax
+        run: python -m compileall -q app.py tests
+
+      - name: Run existing test suite
+        run: python -m unittest discover -s tests -t .
+
+  live-smoke-test:
+    name: Live website smoke test
+    runs-on: ubuntu-latest
+    if: ${{ vars.LIVE_BASE_URL != '' }}
+
+    steps:
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Check live homepage
+        env:
+          LIVE_BASE_URL: ${{ vars.LIVE_BASE_URL }}
+        run: |
+          python - <<'PY'
+          import os
+          import urllib.error
+          import urllib.request
+
+          url = os.environ["LIVE_BASE_URL"].strip().rstrip("/") + "/"
+
+          if not url.startswith("https://"):
+              raise SystemExit("LIVE_BASE_URL must use HTTPS.")
+
+          request = urllib.request.Request(
+              url,
+              headers={"User-Agent": "GrievancePortal-SmokeTest/1.0"},
+          )
+
+          try:
+              with urllib.request.urlopen(request, timeout=20) as response:
+                  content_type = response.headers.get("Content-Type", "")
+                  body = response.read(1_000_001)
+
+                  if response.status != 200:
+                      raise SystemExit(
+                          f"Homepage returned HTTP {response.status}."
+                      )
+
+                  if "text/html" not in content_type.lower():
+                      raise SystemExit(
+                          f"Unexpected content type: {content_type}"
+                      )
+
+                  if not body.strip():
+                      raise SystemExit("Homepage returned an empty response.")
+
+                  if len(body) > 1_000_000:
+                      raise SystemExit("Homepage response exceeded 1 MB.")
+
+                  print("PASS: HTTPS homepage returned non-empty HTML.")
+          except (urllib.error.URLError, TimeoutError) as exc:
+              raise SystemExit(f"FAIL: Homepage request failed: {exc}")
+          PY
