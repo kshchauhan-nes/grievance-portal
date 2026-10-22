@@ -4,3 +4,9 @@ __pycache__/
 complaints.db
 .env
 
+*.db
+*.db-*
+.env.*
+!.env.example
+test-reports/
+.pytest_cache/

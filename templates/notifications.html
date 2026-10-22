@@ -331,6 +331,7 @@
                 method="POST"
                 action="{{ url_for('mark_all_notifications_read') }}"
             >
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
                 <button
                     class="mark-all"
@@ -461,6 +462,7 @@
                             notification_id=notification.id
                         ) }}"
                     >
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
                         <button
                             class="read-button"

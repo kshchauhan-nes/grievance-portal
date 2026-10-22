@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Verification Requests | General Grievance Portal</title>
 
-```
 <style>
     * { box-sizing: border-box; }
 
@@ -143,7 +142,6 @@
         }
     }
 </style>
-```
 
 </head>
 
@@ -152,7 +150,6 @@
 <nav>
     <div class="brand">General Grievance Portal</div>
 
-```
 <div>
     <a href="{{ url_for('authority_dashboard') }}">
         Dashboard
@@ -164,13 +161,13 @@
         Logout
     </a>
 </div>
-```
 
 </nav>
 
 <div class="container">
+    {% include "_flash.html" %}
 
-```
+
 <div class="header">
     <h1>Verification Requests</h1>
     <p>
@@ -178,6 +175,13 @@
         for your organization.
     </p>
 </div>
+
+<div class="privacy">
+        Privacy: email and phone are never shown here, and the full name
+        appears only after a request is approved. Compare the reference
+        with your organization's own records. Verification is manual and
+        proves only what the method states below.
+    </div>
 
 {% if verifications %}
 
@@ -196,8 +200,10 @@
                         <strong>User:</strong>
                         {{ verification.username }}<br>
 
-                        <strong>Name:</strong>
-                        {{ verification.full_name }}<br>
+                        {% if verification.full_name %}
+                            <strong>Name (approved):</strong>
+                            {{ verification.full_name }}<br>
+                        {% endif %}
 
                         <strong>Organization:</strong>
                         {{ verification.organization_name }}<br>
@@ -205,9 +211,19 @@
                         <strong>Method:</strong>
                         {{ verification.verification_method }}<br>
 
+                        <strong>Reference:</strong>
+                        {{ verification.reference_detail or "Not provided (older request)" }}<br>
+
                         <strong>Submitted:</strong>
                         {{ verification.created_at }}
                     </div>
+
+                    {% if methods.get(verification.verification_method) %}
+                        <p class="details">
+                            <strong>Approval means:</strong>
+                            {{ methods[verification.verification_method].proves }}
+                        </p>
+                    {% endif %}
                 </div>
 
                 <div>
@@ -225,56 +241,58 @@
 
             </div>
 
-            <div class="privacy">
-                Identity information is visible here
-                because this is an organization verification request.
-                Use it only for legitimate verification purposes.
-            </div>
-
             {% if verification.verification_status == 'Pending' %}
 
-                <div class="actions">
+                <form method="POST"
+                      action="{{ url_for(
+                          'authority_update_verification',
+                          verification_id=verification.id
+                      ) }}">
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
-                    <form method="POST"
-                          action="{{ url_for(
-                              'authority_update_verification',
-                              verification_id=verification.id
-                          ) }}">
+                    <label for="note-{{ verification.id }}" class="details">
+                        Note to the user (optional)
+                    </label>
+                    <input type="text"
+                           id="note-{{ verification.id }}"
+                           name="review_note"
+                           maxlength="300"
+                           style="width:100%;padding:10px;margin:6px 0 12px;border:1px solid #ccd3df;border-radius:8px;">
 
-                        <input type="hidden"
-                               name="status"
-                               value="Verified">
-
+                    <div class="actions">
                         <button class="verify"
-                                type="submit">
+                                type="submit"
+                                name="status"
+                                value="Verified">
                             Verify
                         </button>
-                    </form>
-
-                    <form method="POST"
-                          action="{{ url_for(
-                              'authority_update_verification',
-                              verification_id=verification.id
-                          ) }}">
-
-                        <input type="hidden"
-                               name="status"
-                               value="Rejected">
 
                         <button class="reject"
-                                type="submit">
+                                type="submit"
+                                name="status"
+                                value="Rejected">
                             Reject
                         </button>
-                    </form>
+                    </div>
+                </form>
 
-                </div>
+            {% else %}
 
-            {% elif verification.verified_at %}
+                {% if verification.reviewed_at %}
+                    <p class="details">
+                        Reviewed: {{ verification.reviewed_at }}
+                    </p>
+                {% elif verification.verified_at %}
+                    <p class="details">
+                        Verified at: {{ verification.verified_at }}
+                    </p>
+                {% endif %}
 
-                <p>
-                    Verified at:
-                    {{ verification.verified_at }}
-                </p>
+                {% if verification.review_note %}
+                    <p class="details">
+                        Note: {{ verification.review_note }}
+                    </p>
+                {% endif %}
 
             {% endif %}
 
@@ -289,8 +307,6 @@
     </div>
 
 {% endif %}
-```
-
 </div>
 
 <footer>

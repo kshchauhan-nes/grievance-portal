@@ -223,12 +223,15 @@
 
     <nav>
         <a href="{{ url_for('authority_dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('authority_verifications') }}">Verifications</a>
         <a href="{{ url_for('notifications_page') }}">Notifications</a>
         <a href="{{ url_for('logout') }}">Logout</a>
     </nav>
 </header>
 
 <div class="container">
+    {% include "_flash.html" %}
+
 
     <a class="back" href="{{ url_for('authority_dashboard') }}">
         ← Back to Dashboard
@@ -255,7 +258,7 @@
         <div class="grid">
             <div class="field">
                 <strong>Organization</strong>
-                {{ organization_name }}
+                {{ complaint.organization_name }}
             </div>
 
             <div class="field">
@@ -289,6 +292,11 @@
             </div>
 
             <div class="field">
+                <strong>Priority</strong>
+                {{ complaint.priority }}
+            </div>
+
+            <div class="field">
                 <strong>Privacy Mode</strong>
                 {{ complaint.privacy_mode|capitalize }}
             </div>
@@ -308,6 +316,7 @@
 
         <form method="POST"
               action="{{ url_for('authority_update_status', case_id=complaint.case_id) }}">
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
             <select name="status" required>
                 <option value="">Select new status</option>
@@ -341,6 +350,31 @@
         </form>
     </div>
 
+    {% if complaint.status != "Closed" %}
+    <div class="card">
+        <h2>Handling Priority</h2>
+
+        <form method="POST"
+              action="{{ url_for('authority_update_priority', case_id=complaint.case_id) }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+            <select name="priority" aria-label="Priority" required>
+                {% for name in priorities %}
+                    <option value="{{ name }}"
+                        {% if name == complaint.priority %}selected{% endif %}>
+                        {{ name }}
+                    </option>
+                {% endfor %}
+            </select>
+
+            <button type="submit">Save Priority</button>
+        </form>
+        <p style="margin-top:10px;font-size:13px;color:#667085;">
+            Priority is internal and is not shown to the complainant.
+        </p>
+    </div>
+    {% endif %}
+
     <div class="card">
         <h2>Complainant Identity</h2>
 
@@ -349,8 +383,16 @@
                 <h3>Identity Available</h3>
 
                 <p><strong>Name:</strong> {{ identity.full_name }}</p>
-                <p><strong>Email:</strong> {{ identity.email }}</p>
-                <p><strong>Phone:</strong> {{ identity.phone }}</p>
+                <p><strong>Email:</strong> {{ identity.email or "Not provided" }}</p>
+                <p><strong>Phone:</strong> {{ identity.phone or "Not provided" }}</p>
+
+                {% if disclosure %}
+                    <p><strong>Disclosed by:</strong>
+                        {{ disclosure.disclosed_by_name or "Unknown" }}
+                        on {{ disclosure.created_at }}</p>
+                    <p><strong>Recorded reason:</strong>
+                        {{ disclosure.reason }}</p>
+                {% endif %}
             </div>
 
         {% elif complaint.privacy_mode == "confidential" and can_reveal_identity %}
@@ -359,24 +401,37 @@
 
                 <p>
                     The complainant selected confidential identity protection.
-                    Identity is hidden by default.
+                    The complainant is verified for this organization.
+                    Disclosure is permanent for this case, is recorded, and
+                    the complainant will be notified with your reason.
                 </p>
 
                 <form method="POST"
                       action="{{ url_for('reveal_identity', case_id=complaint.case_id) }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
-                    <input
-                        type="text"
+                    <label for="reason">
+                        Case-specific reason
+                        (at least {{ min_disclosure_reason }} characters)
+                    </label>
+                    <textarea
+                        id="reason"
                         name="reason"
-                        maxlength="500"
-                        placeholder="Reason for identity disclosure"
-                        required
-                    >
+                        minlength="{{ min_disclosure_reason }}"
+                        maxlength="1000"
+                        placeholder="Explain why disclosure is necessary for this case"
+                        required></textarea>
 
                     <button type="submit">
-                        Request Identity Disclosure
+                        Disclose Identity
                     </button>
                 </form>
+            </div>
+
+        {% elif complaint.privacy_mode == "confidential" and reveal_blocked_reason %}
+            <div class="identity-box">
+                <h3>Identity Protected</h3>
+                <p>{{ reveal_blocked_reason }}</p>
             </div>
 
         {% else %}
@@ -386,6 +441,24 @@
         {% endif %}
     </div>
 
+    {% if escalation_alerts %}
+    <div class="card">
+        <h2>Escalation Alerts</h2>
+
+        {% for alert in escalation_alerts %}
+            <div class="event">
+                <h4>{{ alert.status }}</h4>
+                <p>{{ alert.reason }}</p>
+                {% if alert.recommended_action %}
+                    <p><strong>Recommended next action:</strong>
+                        {{ alert.recommended_action }}</p>
+                {% endif %}
+                <small>{{ alert.created_at }}</small>
+            </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
     <div class="card">
         <h2>Case Timeline</h2>
 
@@ -394,7 +467,7 @@
 
                 {% for event in events %}
                     <div class="event">
-                        <h4>{{ event.event_type }}</h4>
+                        <h4>{{ event.event }}</h4>
 
                         <p>
                             {{ event.description }}
@@ -439,6 +512,7 @@
 
         <form method="POST"
               action="{{ url_for('authority_send_message', case_id=complaint.case_id) }}">
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
             <textarea
                 name="message"

@@ -359,6 +359,7 @@
         method="POST"
         class="track-form"
     >
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
         <label for="case_id">
             Case ID

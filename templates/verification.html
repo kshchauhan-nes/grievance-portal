@@ -86,6 +86,23 @@
             line-height: 1.6;
             font-size: 14px;
         }
+        input[type=text] {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #ccd3df;
+            font-size: 15px;
+        }
+        dl.methods { margin: 0; }
+        dl.methods dt { font-weight: bold; margin-top: 14px; }
+        dl.methods dd { margin: 4px 0 0; color: #475467; line-height: 1.6; font-size: 14px; }
+        .reviewer-note {
+            background: #f1f5f9;
+            border-radius: 8px;
+            padding: 10px 12px;
+            margin-top: 8px;
+            font-size: 14px;
+        }
         footer {
             text-align: center;
             color: #667085;
@@ -107,21 +124,25 @@
 </nav>
 
 <div class="container">
+    {% include "_flash.html" %}
 
-```
+
 <div class="card">
     <h1>Identity Verification</h1>
 
     <p class="note">
-        Verification helps an organization confirm your identity
-        when required for confidential grievance handling.
+        Verification is reviewed manually by an authority of the
+        organization. It is required before an authority may disclose
+        your identity on a confidential complaint, and you are notified
+        if that ever happens. Nothing here is checked automatically.
     </p>
 
     {% if error %}
-        <div class="error">{{ error }}</div>
+        <div class="error" role="alert">{{ error }}</div>
     {% endif %}
 
     <form method="POST" action="{{ url_for('verification') }}">
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
         <label for="organization_id">Organization</label>
         <select id="organization_id" name="organization_id" required>
@@ -139,21 +160,37 @@
                 name="verification_method"
                 required>
             <option value="">Select method</option>
-            <option value="Institutional ID">
-                Institutional ID
-            </option>
-            <option value="Official Email">
-                Official Email
-            </option>
-            <option value="Document Verification">
-                Document Verification
-            </option>
+            {% for name, info in methods.items() %}
+                <option value="{{ name }}">{{ name }}</option>
+            {% endfor %}
         </select>
+
+        <label for="reference_detail">
+            Reference for the reviewer
+        </label>
+        <input type="text"
+               id="reference_detail"
+               name="reference_detail"
+               minlength="3"
+               maxlength="100"
+               placeholder="ID number, official email, or staff name and role"
+               autocomplete="off"
+               required>
 
         <button type="submit">
             Submit Verification Request
         </button>
     </form>
+</div>
+
+<div class="card">
+    <h2>What each method proves</h2>
+    <dl class="methods">
+        {% for name, info in methods.items() %}
+            <dt>{{ name }} <span class="note">(reference: {{ info.reference_label }})</span></dt>
+            <dd>{{ info.proves }}</dd>
+        {% endfor %}
+    </dl>
 </div>
 
 <div class="card">
@@ -184,6 +221,12 @@
                     {{ verification.verification_status }}
                 </div>
 
+                {% if verification.review_note %}
+                    <div class="reviewer-note">
+                        Reviewer note: {{ verification.review_note }}
+                    </div>
+                {% endif %}
+
                 {% if verification.verified_at %}
                     <div>
                         Verified:
@@ -206,7 +249,6 @@
 
     {% endif %}
 </div>
-```
 
 </div>
 
