@@ -1281,7 +1281,7 @@ def login():
     return render_template("login.html", error=error)
 
 
-@app.route("/logout", methods=["GET", "POST"])
+@app.route("/logout", methods=["POST"])
 def logout():
     session.clear()
     return redirect(url_for("home"))

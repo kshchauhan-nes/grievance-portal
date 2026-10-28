@@ -54,7 +54,7 @@ class Browser:
         return self.post("/login", {"username": username, "password": password})
 
     def logout(self):
-        return self.client.get("/logout")
+        return self.post("/logout")
 
 
 class PortalTestCase(unittest.TestCase):

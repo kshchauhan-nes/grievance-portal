@@ -225,7 +225,10 @@
         <a href="{{ url_for('authority_dashboard') }}">Dashboard</a>
         <a href="{{ url_for('authority_verifications') }}">Verifications</a>
         <a href="{{ url_for('notifications_page') }}">Notifications</a>
-        <a href="{{ url_for('logout') }}">Logout</a>
+        <form method="POST" action="{{ url_for('logout') }}" class="logout-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="logout-link">Logout</button>
+        </form>
     </nav>
 </header>
 

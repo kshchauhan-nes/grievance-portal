@@ -1316,3 +1316,26 @@ footer {
 .message-form button {
     margin-top: 15px;
 }
+
+
+/* Logout is a state-changing POST form, styled like a navigation link. */
+.logout-form {
+    display: inline;
+    margin: 0;
+}
+
+.logout-link {
+    border: 0;
+    padding: 0;
+    background: none;
+    color: #667085;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.logout-link:hover {
+    color: #344054;
+}

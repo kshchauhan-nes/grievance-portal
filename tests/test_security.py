@@ -125,6 +125,14 @@ class CsrfAndHeadersTests(PortalTestCase):
 
 
 class AuthTests(PortalTestCase):
+    def test_get_logout_is_rejected_and_post_requires_csrf(self):
+        browser = self.make_user("logoutcsrf")
+        self.assertEqual(browser.get("/logout").status_code, 405)
+        response = browser.post("/logout", csrf=False)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(browser.post("/logout").status_code, 302)
+        self.assertEqual(browser.get("/my-complaints").status_code, 302)
+
     def test_register_login_logout(self):
         browser = self.browser()
         self.assertEqual(self.register(browser, "alice1").status_code, 302)
