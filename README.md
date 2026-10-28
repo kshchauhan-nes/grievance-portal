@@ -2,7 +2,7 @@
 
 A Flask + SQLite web application for submitting and tracking grievances across three sections: **School, Hospital, and NCC**. It includes complainant accounts, organization-scoped authority accounts, case timelines, messaging, notifications, manual verification, controlled identity disclosure, inactivity escalation alerts, dashboard filters, CSV export, and reports.
 
-> **Project status:** Demo deployed on PythonAnywhere. The latest verified application-code revision is `ffa46a4`; later commits update documentation only. GitHub Actions passed the backend regression suite and configured live homepage smoke test on the documentation-updated branch. The reported local backend suite has 100 passing tests, and selected workflows have been manually verified. Production security, accessibility, and operational verification are not complete. AI features are proposals only; no AI integration is implemented.
+> **Project status:** Demo deployed on PythonAnywhere. The latest verified application-code revision is `ffa46a4`; later commits update documentation only. GitHub Actions run [40755780759](https://github.com/kshchauhan-nes/grievance-portal/actions/runs/40755780759) passed both the backend regression suite and configured live homepage smoke test on commit `90c4e29`. The reported local backend suite has 100 passing tests, and selected workflows have been manually verified. Production security, accessibility, and operational verification are not complete. AI features are proposals only; no AI integration is implemented.
 
 ## Live Demo
 
@@ -90,7 +90,7 @@ The workflow:
 - Runs the backend unit-test suite using Python 3.12.
 - Checks the deployed homepage when the `LIVE_BASE_URL` repository variable is configured.
 
-**Latest recorded run:** both backend tests and the live homepage smoke test passed on the documentation-updated `development` branch. The live smoke test checks HTTPS, HTTP 200, HTML content type, and a non-empty response. It does not verify login, complaint submission, authorization, or other application workflows. Check the [Actions history](https://github.com/kshchauhan-nes/ncc-grievance-portal/actions) for the current run and commit.
+**Latest recorded run:** [GitHub Actions run 40755780759](https://github.com/kshchauhan-nes/grievance-portal/actions/runs/40755780759), commit `90c4e29`; both backend tests and the live homepage smoke test passed. The live smoke test checks HTTPS, HTTP 200, HTML content type, and a non-empty response. It does not verify login, complaint submission, authorization, or other application workflows. Check the [Actions history](https://github.com/kshchauhan-nes/grievance-portal/actions) for the current run and commit.
 
 GitHub Actions does not automatically deploy new code to PythonAnywhere.
 
@@ -102,7 +102,7 @@ Run from the project root with the virtual environment active:
 python -W error::ResourceWarning -m unittest discover -s tests -t .
 ```
 
-**Latest reported local result:** 100 tests passed (reported October 2026). GitHub Actions also passed its backend test suite; see the [Actions history](https://github.com/kshchauhan-nes/ncc-grievance-portal/actions) for the current run.
+**Latest reported local result:** 100 tests passed (reported October 2026). GitHub Actions also passed its backend test suite in [run 40755780759](https://github.com/kshchauhan-nes/grievance-portal/actions/runs/40755780759).
 
 Migration tests use Git history to reconstruct the legacy schema from commit `d8f2fd3`. A source-only ZIP without `.git` cannot run that historical migration test; it may be skipped. To verify migration coverage, run tests in the full Git repository with required history available. Do not interpret a skipped migration test as a pass.
 
