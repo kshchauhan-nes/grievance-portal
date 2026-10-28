@@ -82,7 +82,7 @@ class EscalationRunnerTests(unittest.TestCase):
         self.assertIn("DATABASE_PATH must be an absolute path", self.log_file.read_text())
 
     def test_shell_secret_does_not_replace_missing_file_secret(self):
-        self.env_file.write_text("DATABASE_PATH=" + str(self.root / "live.db") + "\\n",
+        self.env_file.write_text("DATABASE_PATH=" + str(self.root / "live.db") + "\n",
                                 encoding="utf-8")
         with unittest.mock.patch.dict(os.environ, {"SECRET_KEY": "inherited-secret"}):
             self.assertEqual(self.run_runner(), 1)
