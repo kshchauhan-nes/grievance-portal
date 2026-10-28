@@ -2,7 +2,7 @@
 
 A Flask + SQLite web application for submitting and tracking grievances across three sections: **School, Hospital, and NCC**. It includes complainant accounts, organization-scoped authority accounts, case timelines, messaging, notifications, manual verification, controlled identity disclosure, inactivity escalation alerts, dashboard filters, CSV export, and reports.
 
-> **Project status:** Demo deployed on PythonAnywhere. The latest verified application-code revision is `ffa46a4`; documentation-only updates followed. GitHub Actions passed both the backend regression suite and configured live homepage smoke test on `f317cf0`. The reported local backend suite has 100 passing tests, and selected workflows have been manually verified. Full production security, accessibility, and operational verification remain incomplete. AI features are proposals only; no AI integration is implemented.
+> **Project status:** Demo deployed on PythonAnywhere. The latest verified application-code revision is `ffa46a4`; later commits update documentation only. GitHub Actions passed the backend regression suite and configured live homepage smoke test on the documentation-updated branch. The reported local backend suite has 100 passing tests, and selected workflows have been manually verified. Production security, accessibility, and operational verification are not complete. AI features are proposals only; no AI integration is implemented.
 
 ## Live Demo
 
@@ -90,7 +90,7 @@ The workflow:
 - Runs the backend unit-test suite using Python 3.12.
 - Checks the deployed homepage when the `LIVE_BASE_URL` repository variable is configured.
 
-**Latest recorded run:** both backend tests and the live homepage smoke test passed at commit `f317cf0`. The live smoke test checks HTTPS, HTTP 200, HTML content type, and a non-empty response. It does not verify login, complaint submission, authorization, or other application workflows.
+**Latest recorded run:** both backend tests and the live homepage smoke test passed on the documentation-updated `development` branch. The live smoke test checks HTTPS, HTTP 200, HTML content type, and a non-empty response. It does not verify login, complaint submission, authorization, or other application workflows. Check the [Actions history](https://github.com/kshchauhan-nes/ncc-grievance-portal/actions) for the current run and commit.
 
 GitHub Actions does not automatically deploy new code to PythonAnywhere.
 
@@ -102,7 +102,7 @@ Run from the project root with the virtual environment active:
 python -W error::ResourceWarning -m unittest discover -s tests -t .
 ```
 
-**Latest reported local result:** 100 tests passed (reported October 2026). GitHub Actions also passed its backend test suite at `f317cf0`.
+**Latest reported local result:** 100 tests passed (reported October 2026). GitHub Actions also passed its backend test suite; see the [Actions history](https://github.com/kshchauhan-nes/ncc-grievance-portal/actions) for the current run.
 
 Migration tests use Git history to reconstruct the legacy schema from commit `d8f2fd3`. A source-only ZIP without `.git` cannot run that historical migration test; it may be skipped. To verify migration coverage, run tests in the full Git repository with required history available. Do not interpret a skipped migration test as a pass.
 
@@ -154,13 +154,14 @@ The agent is rule-based; it creates alerts and notifications but does not automa
 
 ## Security and deployment checklist
 
-The following checks have been confirmed so far: the shell-loaded environment reports `APP_ENV=production` and a configured (non-empty) `SECRET_KEY`; the WSGI file explicitly loads the environment file and sets `COOKIE_SECURE=1`; the site loads over HTTPS; Python syntax compilation passed; and the latest GitHub Actions backend and live homepage smoke tests passed. Secret strength/uniqueness, legacy account rotation, backups, full deployed authorization/privacy review, and accessibility have **not** been confirmed.
+The following checks have been confirmed so far: the shell-loaded environment reports `APP_ENV=production` and a configured (non-empty) `SECRET_KEY`; the WSGI file explicitly loads the environment file and sets `COOKIE_SECURE=1`; the site loads over HTTPS; Python syntax compilation passed; and the latest GitHub Actions backend and live homepage smoke tests passed. The user confirmed demo/authority password changes and created a timestamped SQLite backup whose integrity check returned `ok`. Production secret strength/uniqueness, backup restore testing, full deployed authorization/privacy review, and accessibility have **not** been independently confirmed.
 
 - [x] Production mode, secret-key presence, secure-cookie flag, HTTPS response, and WSGI environment-file path checked.
 - [x] GitHub Actions backend regression tests and live homepage smoke test passed at `ffa46a4`.
-- [ ] Rotate legacy/demo authority passwords and remove accounts not needed.
+- [x] User confirmed demo/authority password changes. Review and remove any unused accounts before real use.
 - [ ] Confirm organization-scoped authorization and identity-disclosure behavior in the deployed environment.
-- [ ] Back up and test database migration/restore procedures.
+- [x] Create a production database backup and confirm SQLite integrity (`ok`).
+- [ ] Test restore and migration procedures against a separate copy, not the live database.
 - [ ] Review deployed CSRF protection, session settings, error handling, logging, and login rate limiting.
 - [ ] Complete browser-based functional, accessibility, keyboard, screen-reader, and responsive-layout checks.
 - [ ] Verify the deployed revision after the latest GitHub change and document the PythonAnywhere reload/recovery procedure.
@@ -171,7 +172,7 @@ The following checks have been confirmed so far: the shell-loaded environment re
 ## Current limitations
 
 - Browser-based visual, responsive, and accessibility checks remain outstanding.
-- Legacy/demo authority passwords and production database backup/restore have not been verified.
+- The user confirmed demo/authority password changes and a valid production database backup; restore testing remains outstanding.
 - Login throttling and lazy escalation timing are per-process, not shared across workers; lazy escalation is request-triggered and is not a background scheduler.
 - Inline styles/scripts remain in several templates; the current Content Security Policy allows inline content for compatibility.
 - GitHub Actions does not automatically deploy the application.
