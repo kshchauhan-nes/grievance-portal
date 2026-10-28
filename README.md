@@ -2,7 +2,7 @@
 
 A Flask + SQLite web application for submitting and tracking grievances across three sections: **School, Hospital, and NCC**. It includes complainant accounts, organization-scoped authority accounts, case timelines, messaging, notifications, manual verification, controlled identity disclosure, inactivity escalation alerts, dashboard filters, CSV export, and reports.
 
-> **Project status:** Demo deployed on PythonAnywhere. The latest verified application-code revision is `ffa46a4`; later commits update documentation only. The latest confirmed successful Actions run [40755780759](https://github.com/kshchauhan-nes/grievance-portal/actions/runs/40755780759) passed backend tests and the live homepage smoke test on commit `90c4e29`. The security-header assertions were added in commit `ceb9d89` and passed in [run 40756370843](https://github.com/kshchauhan-nes/grievance-portal/actions/runs/40756370843), which ran on that workflow revision. The reported local backend suite has 100 passing tests, and selected workflows have been manually verified. Production security, accessibility, and operational verification are not complete. AI features are proposals only; no AI integration is implemented.
+> **Project status:** Demo deployed on PythonAnywhere. GitHub `development` contains newer application, test, and documentation changes than the last deployment revision recorded in this file; the currently deployed revision has not been independently verified. GitHub Actions has previously passed the backend suite and live homepage/security-header smoke checks, but those checks do not prove that new commits are deployed or verify every authenticated workflow. Production security, accessibility, and operational verification are not complete. AI features are proposals only; no AI integration is implemented.
 
 ## Live Demo
 
@@ -143,7 +143,7 @@ python -m flask --app app run-escalation
 
 The agent is rule-based; it creates alerts and notifications but does not automatically change case status.
 
-**Scheduling limitation:** the lazy escalation check is triggered only by eligible logged-in requests. It is throttled using in-memory state per application process, so it is opportunistic rather than time-guaranteed. If no eligible request arrives, the check may not run when a threshold is reached. Different worker processes maintain independent throttle state. It is **not a background scheduler** and must not be relied on for timely operational escalation. Use an external scheduler or dedicated worker to invoke the CLI command at a defined interval, with shared coordination if running multiple workers.
+**Scheduling limitation:** the lazy escalation check is triggered only by eligible logged-in requests. It is throttled using in-memory state per application process, so it is opportunistic rather than time-guaranteed. It is **not a background scheduler**. PythonAnywhere's current plan rules provide no scheduled tasks on newer free accounts; older free accounts retain one daily task, while paid plans support hourly or daily tasks. See [`docs/ESCALATION_SCHEDULING.md`](docs/ESCALATION_SCHEDULING.md) for the plan distinction, a locked/logged production runner, and setup limitations. No scheduled task or production configuration was changed by this repository update.
 
 ## Privacy and verification notes
 
@@ -174,6 +174,7 @@ The following checks have been confirmed so far: the shell-loaded environment re
 - Browser-based visual, responsive, and accessibility checks remain outstanding.
 - The user confirmed demo/authority password changes and a valid production database backup; restore testing remains outstanding.
 - Login throttling and lazy escalation timing are per-process, not shared across workers; lazy escalation is request-triggered and is not a background scheduler.
+- `scripts/run_escalation.py` is a tested one-shot runner with production environment validation, a filesystem lock, and failure logging. It still needs a supported scheduler to run periodically; no task was created.
 - Inline styles/scripts remain in several templates; the current Content Security Policy allows inline content for compatibility.
 - GitHub Actions does not automatically deploy the application.
 - AI features are not implemented. See [`docs/AI_PROPOSAL.md`](docs/AI_PROPOSAL.md).
