@@ -2,12 +2,24 @@
 
 A Flask + SQLite web application for submitting and tracking grievances across three sections: **School, Hospital, and NCC**. It includes complainant accounts, organization-scoped authority accounts, case timelines, messaging, notifications, manual verification, controlled identity disclosure, inactivity escalation alerts, dashboard filters, CSV export, and reports.
 
-> **Project status:** The application has been deployed to PythonAnywhere, and automated backend tests are configured in GitHub Actions. Browser layout, accessibility, responsive-design, and production security checks are still outstanding. AI features are proposed only; no AI integration is implemented.
+> **Project status:** A demo is deployed on PythonAnywhere. The reported local backend suite has 100 passing tests, and selected end-to-end workflows have been manually verified on the live site. Production security, accessibility, and deployment configuration still require verification. AI features are proposed only; no AI integration is implemented.
+
 ## Live Demo
 
 **Hosted application:** https://deploynes.pythonanywhere.com/
 
-The application is hosted on PythonAnywhere. Do not submit real or sensitive personal information through the demo until production security and privacy checks have been completed.
+The demo is intended for evaluation, not real grievance handling. Do not submit real or sensitive personal information until production security, privacy, and operational checks have been completed.
+
+### Manually verified live workflows
+
+The following have been manually checked on the deployed demo:
+- Complaint submission and display of a case ID.
+- Complainant complaint history and case timeline.
+- Authority login/access and a case status update.
+- Manual escalation check command/result.
+
+These are manual checks, not an automated end-to-end test suite. They do not establish that every browser, role, privacy edge case, or deployment setting has been verified.
+
 ## Requirements
 
 - Python 3.10 or newer (Python 3.12 recommended)
@@ -40,7 +52,7 @@ The application does not automatically load `.env`. Export environment variables
 | `DATABASE_PATH` | SQLite database path; defaults to `complaints.db`. |
 | `SEED_AUTHORITY_PASSWORD` | Optional password used only when creating demo authority accounts that do not already exist. Use a strong value and do not reuse a real password. |
 | `COOKIE_SECURE` | Set to `1` when serving over HTTPS. Defaults to on in production mode. |
-| `ESCALATION_INTERVAL_SECONDS` | Interval for the opportunistic escalation check; defaults to 600. Set to `0` to disable the lazy check and run the CLI command on a schedule. |
+| `ESCALATION_INTERVAL_SECONDS` | Minimum interval between opportunistic escalation checks in a single application process; defaults to 600. Set to `0` to disable the lazy check and use the CLI command from an external scheduler. |
 | `FLASK_DEBUG` | Set to `1` only for local development if you run `python app.py`. Never enable the debugger in production. |
 
 Example for a local development shell:
@@ -69,6 +81,7 @@ python -m flask --app app reset-password school_reviewer
 ```
 
 **Deployment warning:** existing databases may retain legacy seeded authority passwords. Reset every known/default authority password before deployment and confirm that only intended authority accounts exist. Do not expose demo credentials publicly.
+
 ## Continuous Integration
 
 GitHub Actions runs automated checks on pushes and pull requests targeting the `development` branch, and can also be started manually.
@@ -81,6 +94,7 @@ The workflow:
 The live smoke test checks that the homepage responds over HTTPS with a successful status and non-empty HTML. It does **not** verify login, complaint submission, authorization, or other application workflows.
 
 A successful CI run is evidence that the configured checks passed; it does not automatically deploy new code to PythonAnywhere.
+
 ## Tests
 
 Run from the project root with the virtual environment active:
@@ -88,6 +102,8 @@ Run from the project root with the virtual environment active:
 ```bash
 python -W error::ResourceWarning -m unittest discover -s tests -t .
 ```
+
+**Latest reported local result:** 100 tests passed (reported October 2026). This is a locally reported result, not a guarantee that the current hosted deployment passed the same suite.
 
 The migration tests use Git history to reconstruct the legacy schema from commit `d8f2fd3`. A source-only ZIP without `.git` cannot run that historical migration test; it may be skipped. To verify migration coverage, run the tests in the full Git repository with the required history available. Do not interpret a skipped migration test as a pass.
 
@@ -126,7 +142,9 @@ Run a one-time inactivity check with:
 python -m flask --app app run-escalation
 ```
 
-The agent is rule-based; it creates alerts and notifications but does not automatically change case status. The lazy check and login throttle use in-process memory, so their timing/state is not shared between multiple worker processes. For multi-worker deployment, replace these with shared storage or a single scheduled worker before relying on them operationally.
+The agent is rule-based; it creates alerts and notifications but does not automatically change case status.
+
+**Important scheduling limitation:** the lazy escalation check is triggered only by eligible logged-in requests. It is throttled using in-memory state per application process, so it is opportunistic rather than time-guaranteed. If no eligible request arrives, the check may not run when a threshold is reached. Different worker processes maintain independent throttle state. It is **not a background scheduler** and should not be relied on for timely operational escalation. Use a real external scheduler or dedicated worker to invoke the CLI command at a defined interval, and use shared coordination if running multiple workers.
 
 ## Privacy and verification notes
 
@@ -137,21 +155,26 @@ The agent is rule-based; it creates alerts and notifications but does not automa
 
 ## Security and deployment checklist
 
+Treat this checklist as outstanding until each item has been verified in the actual hosting environment.
+
 - [ ] Set a strong, private `SECRET_KEY` and `APP_ENV=production`.
-- [ ] Serve only behind HTTPS and set secure cookies appropriately.
+- [ ] Serve only behind HTTPS and verify secure cookies are enabled.
 - [ ] Rotate all legacy/demo authority passwords and remove accounts not needed.
+- [ ] Confirm authority accounts and organization-scoped authorization behave as intended.
 - [ ] Back up and test database migration/restore procedures.
-- [ ] Run the full test suite in the actual Git repository.
-- [ ] Complete browser, accessibility, and responsive-layout checks.
-- [ ] Configure a production WSGI server and process manager; do not use Flask's development server in production.
-- [ ] Review logging, backups, retention, authorization, rate limiting, and organizational privacy requirements.
+- [ ] Run the full test suite in the actual Git repository and confirm no required tests are skipped.
+- [ ] Verify CSRF protection, session settings, error handling, logging, and rate limiting in the deployed configuration.
+- [ ] Complete browser-based functional, accessibility, keyboard, screen-reader, and responsive-layout checks.
+- [ ] Verify production WSGI configuration, process behavior, restart/reload procedure, and deployed revision; do not use Flask's development server in production.
+- [ ] Review logging, backups, retention, authorization, and organizational privacy requirements.
 - [ ] Load-test and security-review the application before handling real cases.
 - [ ] Do not commit `.env`, database files, user data, or credentials.
 
 ## Current limitations
 
-- Browser visual and accessibility checks are outstanding.
-- Login throttling and lazy escalation timing are per-process, not shared across workers.
-The application is live on PythonAnywhere. Production WSGI configuration and security settings still require verification.
+- Browser-based visual, responsive, and accessibility checks remain outstanding.
+- Production security and PythonAnywhere WSGI/process configuration have not been fully verified.
+- Login throttling and lazy escalation timing are per-process, not shared across workers; lazy escalation is request-triggered and is not a background scheduler.
 - Inline styles/scripts remain in several templates; the current Content Security Policy allows inline content for compatibility.
+- GitHub Actions does not automatically deploy the application.
 - AI features are not implemented. See [`docs/AI_PROPOSAL.md`](docs/AI_PROPOSAL.md).
