@@ -2,8 +2,12 @@
 
 A Flask + SQLite web application for submitting and tracking grievances across three sections: **School, Hospital, and NCC**. It includes complainant accounts, organization-scoped authority accounts, case timelines, messaging, notifications, manual verification, controlled identity disclosure, inactivity escalation alerts, dashboard filters, CSV export, and reports.
 
-> **Project status:** this package is a work-in-progress snapshot. Automated tests are included. Browser layout/accessibility checks and production deployment have not yet been completed. AI features are proposed only; no AI integration is implemented.
+> **Project status:** The application has been deployed to PythonAnywhere, and automated backend tests are configured in GitHub Actions. Browser layout, accessibility, responsive-design, and production security checks are still outstanding. AI features are proposed only; no AI integration is implemented.
+## Live Demo
 
+**Hosted application:** https://deploynes.pythonanywhere.com/
+
+The application is hosted on PythonAnywhere. Do not submit real or sensitive personal information through the demo until production security and privacy checks have been completed.
 ## Requirements
 
 - Python 3.10 or newer (Python 3.12 recommended)
@@ -65,7 +69,18 @@ python -m flask --app app reset-password school_reviewer
 ```
 
 **Deployment warning:** existing databases may retain legacy seeded authority passwords. Reset every known/default authority password before deployment and confirm that only intended authority accounts exist. Do not expose demo credentials publicly.
+## Continuous Integration
 
+GitHub Actions runs automated checks on pushes and pull requests targeting the `development` branch, and can also be started manually.
+
+The workflow:
+- Checks Python syntax in `app.py` and `tests/`.
+- Runs the backend unit-test suite using Python 3.12.
+- Optionally checks the deployed homepage when the repository variable `LIVE_BASE_URL` is configured.
+
+The live smoke test checks that the homepage responds over HTTPS with a successful status and non-empty HTML. It does **not** verify login, complaint submission, authorization, or other application workflows.
+
+A successful CI run is evidence that the configured checks passed; it does not automatically deploy new code to PythonAnywhere.
 ## Tests
 
 Run from the project root with the virtual environment active:
