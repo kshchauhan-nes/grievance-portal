@@ -2,7 +2,7 @@
 
 A Flask + SQLite web application for submitting and tracking grievances across three sections: **School, Hospital, and NCC**. It includes complainant accounts, organization-scoped authority accounts, case timelines, messaging, notifications, manual verification, controlled identity disclosure, inactivity escalation alerts, dashboard filters, CSV export, and reports.
 
-> **Project status:** Demo deployed on PythonAnywhere. The latest verified application-code revision is `ffa46a4`; later commits update documentation only. GitHub Actions run [40755780759](https://github.com/kshchauhan-nes/grievance-portal/actions/runs/40755780759) passed both the backend regression suite and configured live homepage smoke test on commit `90c4e29`. The reported local backend suite has 100 passing tests, and selected workflows have been manually verified. Production security, accessibility, and operational verification are not complete. AI features are proposals only; no AI integration is implemented.
+> **Project status:** Demo deployed on PythonAnywhere. The latest verified application-code revision is `ffa46a4`; later commits update documentation only. The latest confirmed successful Actions run [40755780759](https://github.com/kshchauhan-nes/grievance-portal/actions/runs/40755780759) passed backend tests and the live homepage smoke test on commit `90c4e29`. The security-header assertions were added later in commit `ceb9d89`; that older run does not verify those assertions. The reported local backend suite has 100 passing tests, and selected workflows have been manually verified. Production security, accessibility, and operational verification are not complete. AI features are proposals only; no AI integration is implemented.
 
 ## Live Demo
 
@@ -90,7 +90,7 @@ The workflow:
 - Runs the backend unit-test suite using Python 3.12.
 - Checks the deployed homepage when the `LIVE_BASE_URL` repository variable is configured.
 
-**Latest recorded run:** [GitHub Actions run 40755780759](https://github.com/kshchauhan-nes/grievance-portal/actions/runs/40755780759), commit `90c4e29`; both backend tests and the live homepage smoke test passed. The live smoke test checks HTTPS, HTTP 200, HTML content type, and a non-empty response. It does not verify login, complaint submission, authorization, or other application workflows. Check the [Actions history](https://github.com/kshchauhan-nes/grievance-portal/actions) for the current run and commit.
+**Latest confirmed successful run:** [GitHub Actions run 40755780759](https://github.com/kshchauhan-nes/grievance-portal/actions/runs/40755780759), commit `90c4e29`; backend tests and the live homepage smoke test passed. The security-header assertions were added in later commit `ceb9d89`, so this run does not verify those new assertions. The workflow checks HTTPS, HTTP 200, HTML content type, a non-empty response, and (on runs containing the newer workflow revision) required security headers. It does not verify login, complaint submission, authorization, or other application workflows. Check the [Actions history](https://github.com/kshchauhan-nes/grievance-portal/actions) for the current run and commit.
 
 GitHub Actions does not automatically deploy new code to PythonAnywhere.
 
