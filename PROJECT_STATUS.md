@@ -6,8 +6,8 @@
 
 - Flask + SQLite grievance portal implemented for School, Hospital, and NCC sections.
 - Demo deployed on PythonAnywhere: https://deploynes.pythonanywhere.com/
-- **Application-code revision:** `ffa46a4` on `development`; later commits update documentation only. The current branch's documentation updates are at `90c4e29`.
-- **GitHub Actions: PASS.** Both backend regression tests and the configured live homepage smoke test passed in [run 40755780759](https://github.com/kshchauhan-nes/grievance-portal/actions/runs/40755780759) on commit `90c4e29`; subsequent changes are documentation-only. The smoke test confirms an HTTPS 200 response with non-empty HTML; it does not exercise authenticated workflows.
+- **Application-code revision:** `ffa46a4` on `development`; later commits update documentation/workflow only. The security-header workflow change is commit `ceb9d89`; documentation accuracy updates follow it.
+- **GitHub Actions: last confirmed run PASS; security-header revision needs a fresh run.** Backend regression tests and the live homepage smoke test passed in [run 40755780759](https://github.com/kshchauhan-nes/grievance-portal/actions/runs/40755780759) on commit `90c4e29`. Security-header assertions were added later in `ceb9d89`, so that run does not validate them. The smoke test does not exercise authenticated workflows.
 - **Latest reported local test result:** 100 tests passed. The separate GitHub Actions test suite also passed on the latest revision.
 - **Manually verified on the live demo:** complaint submission and case ID display; complainant complaint history and case timeline; authority login/access and a case status update; manual escalation-check command/result.
 - **Production configuration checks completed:** runtime inspection reported production mode, a configured secret key (value not displayed), secure cookies enabled, HttpOnly enabled, and SameSite `Lax`; the WSGI file loads `/home/deploynes/.config/grievance-portal.env` and sets `COOKIE_SECURE=1`. The site loads over HTTPS and Python compilation passed. Secret strength/uniqueness and a full deployment security audit have not been established.
@@ -37,7 +37,8 @@
 ### Operations and deployment
 
 - [x] Configure the WSGI environment file path and production cookie flag; confirm HTTPS responds.
-- [x] Confirm the latest GitHub Actions backend and live homepage smoke checks pass at documentation commit `90c4e29` (application code remains `ffa46a4`).
+- [x] Confirm GitHub Actions backend and live homepage smoke checks passed at commit `90c4e29` (application code remains `ffa46a4`).
+- [ ] Confirm a workflow run on or after `ceb9d89` passes the added live security-header assertions.
 - [ ] Confirm PythonAnywhere is pulled to the latest `development` revision and reload after any later application-code deployment. Documentation-only updates do not require a web-app reload. GitHub changes do not automatically deploy.
 - [ ] Establish a reliable recurring escalation schedule independent of user traffic.
 - [ ] Document and test deployment/reload and database recovery procedures.
