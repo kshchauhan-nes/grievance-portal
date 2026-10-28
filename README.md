@@ -2,23 +2,22 @@
 
 A Flask + SQLite web application for submitting and tracking grievances across three sections: **School, Hospital, and NCC**. It includes complainant accounts, organization-scoped authority accounts, case timelines, messaging, notifications, manual verification, controlled identity disclosure, inactivity escalation alerts, dashboard filters, CSV export, and reports.
 
-> **Project status:** A demo is deployed on PythonAnywhere. The reported local backend suite has 100 passing tests, and selected end-to-end workflows have been manually verified on the live site. Production security, accessibility, and deployment configuration still require verification. AI features are proposed only; no AI integration is implemented.
+> **Project status:** Demo deployed on PythonAnywhere. The latest GitHub Actions run at commit `ffa46a4` passed both the backend regression suite and configured live homepage smoke test. The reported local backend suite has 100 passing tests, and selected workflows have been manually verified. Full production security, accessibility, and operational verification remain incomplete. AI features are proposals only; no AI integration is implemented.
 
 ## Live Demo
 
 **Hosted application:** https://deploynes.pythonanywhere.com/
 
-The demo is intended for evaluation, not real grievance handling. Do not submit real or sensitive personal information until production security, privacy, and operational checks have been completed.
+This is an evaluation demo, not a production grievance-handling service. Do not submit real or sensitive personal information until security, privacy, backup, and operational checks are complete.
 
 ### Manually verified live workflows
 
-The following have been manually checked on the deployed demo:
 - Complaint submission and display of a case ID.
 - Complainant complaint history and case timeline.
 - Authority login/access and a case status update.
-- Manual escalation check command/result.
+- Manual escalation-check command/result.
 
-These are manual checks, not an automated end-to-end test suite. They do not establish that every browser, role, privacy edge case, or deployment setting has been verified.
+These manual checks are not a comprehensive automated end-to-end suite and do not establish that every browser, role, privacy edge case, or deployment setting is verified.
 
 ## Requirements
 
@@ -80,20 +79,20 @@ Reset an existing account password:
 python -m flask --app app reset-password school_reviewer
 ```
 
-**Deployment warning:** existing databases may retain legacy seeded authority passwords. Reset every known/default authority password before deployment and confirm that only intended authority accounts exist. Do not expose demo credentials publicly.
+Existing databases may retain legacy seeded authority passwords. Reset any known/default passwords and confirm only intended authority accounts exist before real use. Do not expose demo credentials publicly.
 
 ## Continuous Integration
 
-GitHub Actions runs automated checks on pushes and pull requests targeting the `development` branch, and can also be started manually.
+GitHub Actions runs on pushes and pull requests targeting `development`, and can be started manually.
 
 The workflow:
 - Checks Python syntax in `app.py` and `tests/`.
 - Runs the backend unit-test suite using Python 3.12.
-- Optionally checks the deployed homepage when the repository variable `LIVE_BASE_URL` is configured.
+- Checks the deployed homepage when the `LIVE_BASE_URL` repository variable is configured.
 
-The live smoke test checks that the homepage responds over HTTPS with a successful status and non-empty HTML. It does **not** verify login, complaint submission, authorization, or other application workflows.
+**Latest recorded run:** both backend tests and the live homepage smoke test passed at commit `ffa46a4`. The live smoke test checks HTTPS, HTTP 200, HTML content type, and a non-empty response. It does not verify login, complaint submission, authorization, or other application workflows.
 
-A successful CI run is evidence that the configured checks passed; it does not automatically deploy new code to PythonAnywhere.
+GitHub Actions does not automatically deploy new code to PythonAnywhere.
 
 ## Tests
 
@@ -103,9 +102,9 @@ Run from the project root with the virtual environment active:
 python -W error::ResourceWarning -m unittest discover -s tests -t .
 ```
 
-**Latest reported local result:** 100 tests passed (reported October 2026). This is a locally reported result, not a guarantee that the current hosted deployment passed the same suite.
+**Latest reported local result:** 100 tests passed (reported October 2026). GitHub Actions also passed its backend test suite at `ffa46a4`.
 
-The migration tests use Git history to reconstruct the legacy schema from commit `d8f2fd3`. A source-only ZIP without `.git` cannot run that historical migration test; it may be skipped. To verify migration coverage, run the tests in the full Git repository with the required history available. Do not interpret a skipped migration test as a pass.
+Migration tests use Git history to reconstruct the legacy schema from commit `d8f2fd3`. A source-only ZIP without `.git` cannot run that historical migration test; it may be skipped. To verify migration coverage, run tests in the full Git repository with required history available. Do not interpret a skipped migration test as a pass.
 
 ## Database backup and migration
 
@@ -144,36 +143,35 @@ python -m flask --app app run-escalation
 
 The agent is rule-based; it creates alerts and notifications but does not automatically change case status.
 
-**Important scheduling limitation:** the lazy escalation check is triggered only by eligible logged-in requests. It is throttled using in-memory state per application process, so it is opportunistic rather than time-guaranteed. If no eligible request arrives, the check may not run when a threshold is reached. Different worker processes maintain independent throttle state. It is **not a background scheduler** and should not be relied on for timely operational escalation. Use a real external scheduler or dedicated worker to invoke the CLI command at a defined interval, and use shared coordination if running multiple workers.
+**Scheduling limitation:** the lazy escalation check is triggered only by eligible logged-in requests. It is throttled using in-memory state per application process, so it is opportunistic rather than time-guaranteed. If no eligible request arrives, the check may not run when a threshold is reached. Different worker processes maintain independent throttle state. It is **not a background scheduler** and must not be relied on for timely operational escalation. Use an external scheduler or dedicated worker to invoke the CLI command at a defined interval, with shared coordination if running multiple workers.
 
 ## Privacy and verification notes
 
 - Verification is **manual**. The application does not upload or automatically inspect identity documents, and it does not send verification emails.
 - Identity disclosure for confidential cases requires verification for the same organization, a sufficiently detailed reason, and creates an audit event and complainant notification.
-- Review the disclosure and verification workflows with the organization before real personal data is entered.
+- Review disclosure and verification workflows with the organization before real personal data is entered.
 - CSV export intentionally excludes complaint text and identity fields, but exported files should still be handled as sensitive operational data.
 
 ## Security and deployment checklist
 
-Treat this checklist as outstanding until each item has been verified in the actual hosting environment.
+The following checks have been confirmed so far: the shell-loaded environment reports `APP_ENV=production` and a configured (non-empty) `SECRET_KEY`; the WSGI file explicitly loads the environment file and sets `COOKIE_SECURE=1`; the site loads over HTTPS; Python syntax compilation passed; and the latest GitHub Actions backend and live homepage smoke tests passed. Secret strength/uniqueness, legacy account rotation, backups, full deployed authorization/privacy review, and accessibility have **not** been confirmed.
 
-- [ ] Set a strong, private `SECRET_KEY` and `APP_ENV=production`.
-- [ ] Serve only behind HTTPS and verify secure cookies are enabled.
-- [ ] Rotate all legacy/demo authority passwords and remove accounts not needed.
-- [ ] Confirm authority accounts and organization-scoped authorization behave as intended.
+- [x] Production mode, secret-key presence, secure-cookie flag, HTTPS response, and WSGI environment-file path checked.
+- [x] GitHub Actions backend regression tests and live homepage smoke test passed at `ffa46a4`.
+- [ ] Rotate legacy/demo authority passwords and remove accounts not needed.
+- [ ] Confirm organization-scoped authorization and identity-disclosure behavior in the deployed environment.
 - [ ] Back up and test database migration/restore procedures.
-- [ ] Run the full test suite in the actual Git repository and confirm no required tests are skipped.
-- [ ] Verify CSRF protection, session settings, error handling, logging, and rate limiting in the deployed configuration.
+- [ ] Review deployed CSRF protection, session settings, error handling, logging, and login rate limiting.
 - [ ] Complete browser-based functional, accessibility, keyboard, screen-reader, and responsive-layout checks.
-- [ ] Verify production WSGI configuration, process behavior, restart/reload procedure, and deployed revision; do not use Flask's development server in production.
-- [ ] Review logging, backups, retention, authorization, and organizational privacy requirements.
-- [ ] Load-test and security-review the application before handling real cases.
-- [ ] Do not commit `.env`, database files, user data, or credentials.
+- [ ] Verify the deployed revision after the latest GitHub change and document the PythonAnywhere reload/recovery procedure.
+- [ ] Review logging, backups, retention, and organizational privacy requirements.
+- [ ] Load-test and obtain a security review before handling real cases.
+- [ ] Never commit `.env`, database files, user data, or credentials.
 
 ## Current limitations
 
 - Browser-based visual, responsive, and accessibility checks remain outstanding.
-- Production security and PythonAnywhere WSGI/process configuration have not been fully verified.
+- Legacy/demo authority passwords and production database backup/restore have not been verified.
 - Login throttling and lazy escalation timing are per-process, not shared across workers; lazy escalation is request-triggered and is not a background scheduler.
 - Inline styles/scripts remain in several templates; the current Content Security Policy allows inline content for compatibility.
 - GitHub Actions does not automatically deploy the application.
