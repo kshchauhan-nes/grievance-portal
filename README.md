@@ -2,7 +2,7 @@
 
 A Flask + SQLite web application for submitting and tracking grievances across three sections: **School, Hospital, and NCC**. It includes complainant accounts, organization-scoped authority accounts, case timelines, messaging, notifications, manual verification, controlled identity disclosure, inactivity escalation alerts, dashboard filters, CSV export, and reports.
 
-> **Project status:** Demo deployed on PythonAnywhere. The latest GitHub Actions run at commit `ffa46a4` passed both the backend regression suite and configured live homepage smoke test. The reported local backend suite has 100 passing tests, and selected workflows have been manually verified. Full production security, accessibility, and operational verification remain incomplete. AI features are proposals only; no AI integration is implemented.
+> **Project status:** Demo deployed on PythonAnywhere. The latest verified application-code revision is `ffa46a4`; documentation-only updates followed. GitHub Actions passed both the backend regression suite and configured live homepage smoke test on `f317cf0`. The reported local backend suite has 100 passing tests, and selected workflows have been manually verified. Full production security, accessibility, and operational verification remain incomplete. AI features are proposals only; no AI integration is implemented.
 
 ## Live Demo
 
@@ -90,7 +90,7 @@ The workflow:
 - Runs the backend unit-test suite using Python 3.12.
 - Checks the deployed homepage when the `LIVE_BASE_URL` repository variable is configured.
 
-**Latest recorded run:** both backend tests and the live homepage smoke test passed at commit `ffa46a4`. The live smoke test checks HTTPS, HTTP 200, HTML content type, and a non-empty response. It does not verify login, complaint submission, authorization, or other application workflows.
+**Latest recorded run:** both backend tests and the live homepage smoke test passed at commit `f317cf0`. The live smoke test checks HTTPS, HTTP 200, HTML content type, and a non-empty response. It does not verify login, complaint submission, authorization, or other application workflows.
 
 GitHub Actions does not automatically deploy new code to PythonAnywhere.
 
@@ -102,7 +102,7 @@ Run from the project root with the virtual environment active:
 python -W error::ResourceWarning -m unittest discover -s tests -t .
 ```
 
-**Latest reported local result:** 100 tests passed (reported October 2026). GitHub Actions also passed its backend test suite at `ffa46a4`.
+**Latest reported local result:** 100 tests passed (reported October 2026). GitHub Actions also passed its backend test suite at `f317cf0`.
 
 Migration tests use Git history to reconstruct the legacy schema from commit `d8f2fd3`. A source-only ZIP without `.git` cannot run that historical migration test; it may be skipped. To verify migration coverage, run tests in the full Git repository with required history available. Do not interpret a skipped migration test as a pass.
 
