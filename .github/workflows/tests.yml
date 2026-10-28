@@ -18,6 +18,9 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+        with:
+          # The migration tests reconstruct the legacy schema from commit d8f2fd3.
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
