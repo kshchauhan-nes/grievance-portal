@@ -152,6 +152,6 @@ The agent is rule-based; it creates alerts and notifications but does not automa
 
 - Browser visual and accessibility checks are outstanding.
 - Login throttling and lazy escalation timing are per-process, not shared across workers.
-- Production WSGI deployment has not been verified in this snapshot.
+The application is live on PythonAnywhere. Production WSGI configuration and security settings still require verification.
 - Inline styles/scripts remain in several templates; the current Content Security Policy allows inline content for compatibility.
 - AI features are not implemented. See [`docs/AI_PROPOSAL.md`](docs/AI_PROPOSAL.md).
