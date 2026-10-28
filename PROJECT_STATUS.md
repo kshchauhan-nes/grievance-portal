@@ -10,17 +10,21 @@
 - **GitHub Actions: PASS.** Both backend regression tests and the configured live homepage smoke test passed on `f317cf0` (README documentation update); subsequent changes are documentation-only. The smoke test confirms an HTTPS 200 response with non-empty HTML; it does not exercise authenticated workflows.
 - **Latest reported local test result:** 100 tests passed. The separate GitHub Actions test suite also passed on the latest revision.
 - **Manually verified on the live demo:** complaint submission and case ID display; complainant complaint history and case timeline; authority login/access and a case status update; manual escalation-check command/result.
-- **Production configuration checks completed:** shell-loaded environment reports `APP_ENV=production`, a non-empty `SECRET_KEY`, and `COOKIE_SECURE` defaults to `1`; the WSGI file explicitly sets production mode, loads `/home/deploynes/.config/grievance-portal.env`, and sets `COOKIE_SECURE=1`. The site loads over HTTPS and Python compilation passed. Secret strength/rotation, all runtime settings, and a full deployment security audit have not been established.
+- **Production configuration checks completed:** runtime inspection reported production mode, a configured secret key (value not displayed), secure cookies enabled, HttpOnly enabled, and SameSite `Lax`; the WSGI file loads `/home/deploynes/.config/grievance-portal.env` and sets `COOKIE_SECURE=1`. The site loads over HTTPS and Python compilation passed. Secret strength/uniqueness and a full deployment security audit have not been established.
+- **Operations confirmed by user:** demo/authority passwords were changed; a timestamped SQLite backup was created at `/home/deploynes/backups/grievance-portal/complaints-20261028-192938.db`, size 143,360 bytes, with `PRAGMA integrity_check` returning `ok`. Restore testing has not been done.
 - These checks are a demo smoke test, not comprehensive browser, accessibility, privacy-edge-case, or production-security sign-off.
 
 ## Remaining Work
 
 ### Security and privacy before real use
 
-- [ ] Rotate legacy/demo authority passwords and confirm only intended authority accounts exist (requires access to the live database/account setup).
+- [x] User confirmed demo/authority password changes.
+- [ ] Confirm only intended authority accounts exist before real use.
 - [ ] Review deployed organization-scoped authorization, CSRF protections, error handling, logging, per-process login throttling, and identity-disclosure controls.
-- [ ] Verify database backup, migration, restore, and rollback procedures without risking live data.
-- [ ] Review secret strength/uniqueness and session settings without exposing secret values.
+- [x] Create a production database backup and pass SQLite integrity check.
+- [ ] Verify restore, migration, and rollback procedures using a separate copy.
+- [x] Confirm runtime secret-key presence and session cookie flags without exposing secret values.
+- [ ] Review secret strength/uniqueness and complete an independent security review.
 - [ ] Complete independent security review and load testing before accepting real or sensitive grievances.
 
 ### Accessibility and functional verification
@@ -34,7 +38,7 @@
 
 - [x] Configure the WSGI environment file path and production cookie flag; confirm HTTPS responds.
 - [x] Confirm the latest GitHub Actions backend and live homepage smoke checks pass at `ffa46a4`.
-- [ ] Confirm PythonAnywhere is pulled to the latest `development` revision and reload after any later application-code deployment. GitHub documentation-only updates do not require a web-app reload. GitHub changes do not automatically deploy.
+- [ ] Confirm PythonAnywhere is pulled to the latest `development` revision and reload after any later application-code deployment. Documentation-only updates do not require a web-app reload. GitHub changes do not automatically deploy.
 - [ ] Establish a reliable recurring escalation schedule independent of user traffic.
 - [ ] Document and test deployment/reload and database recovery procedures.
 
