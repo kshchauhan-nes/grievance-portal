@@ -90,7 +90,7 @@ The workflow:
 - Runs the backend unit-test suite using Python 3.12.
 - Checks the deployed homepage when the `LIVE_BASE_URL` repository variable is configured.
 
-**Latest confirmed successful run:** [GitHub Actions run 40755780759](https://github.com/kshchauhan-nes/grievance-portal/actions/runs/40755780759), commit `90c4e29`; backend tests and the live homepage smoke test passed. The security-header assertions passed in [run 40756370843](https://github.com/kshchauhan-nes/grievance-portal/actions/runs/40756370843) on commit `ceb9d89`. The workflow checks HTTPS, HTTP 200, HTML content type, a non-empty response, and the required security headers. It does not verify login, complaint submission, authorization, or other application workflows. Check the [Actions history](https://github.com/kshchauhan-nes/grievance-portal/actions) for the current run and commit.
+**Latest confirmed successful run for the runner and workflow changes:** [GitHub Actions run 40762051655](https://github.com/kshchauhan-nes/grievance-portal/actions/runs/40762051655), commit `81749a3d28873b9442b272ca0e21e45aecacbfa0`. Python syntax passed, all 115 backend tests passed with no skips, and the live homepage/security-header smoke test passed. The workflow checks HTTPS, HTTP 200, HTML content type, a non-empty response, and required security headers; it does not verify login, complaint submission, authorization, or other authenticated workflows. The workflow now fetches full Git history so the historical migration tests can run instead of being skipped. This documentation update itself triggers a new run; check the [Actions history](https://github.com/kshchauhan-nes/grievance-portal/actions) for its result.
 
 GitHub Actions does not automatically deploy new code to PythonAnywhere.
 
@@ -102,7 +102,7 @@ Run from the project root with the virtual environment active:
 python -W error::ResourceWarning -m unittest discover -s tests -t .
 ```
 
-**Latest reported local result:** 100 tests passed (reported October 2026). GitHub Actions also passed its backend test suite in [run 40755780759](https://github.com/kshchauhan-nes/grievance-portal/actions/runs/40755780759).
+**Historical local result:** 100 tests passed (reported October 2026). The more recent CI run [40762051655](https://github.com/kshchauhan-nes/grievance-portal/actions/runs/40762051655) ran 115 tests with no skips, including the legacy database migration tests now that the workflow fetches full Git history.
 
 Migration tests use Git history to reconstruct the legacy schema from commit `d8f2fd3`. A source-only ZIP without `.git` cannot run that historical migration test; it may be skipped. To verify migration coverage, run tests in the full Git repository with required history available. Do not interpret a skipped migration test as a pass.
 

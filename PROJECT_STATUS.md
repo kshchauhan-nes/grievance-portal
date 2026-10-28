@@ -6,9 +6,9 @@
 
 - Flask + SQLite grievance portal implemented for School, Hospital, and NCC sections.
 - Demo deployed on PythonAnywhere: https://deploynes.pythonanywhere.com/
-- **GitHub `development` revision:** `838d476` (README scheduler documentation update; follow the branch head for the exact current SHA). The branch now includes a one-shot escalation runner and its tests. PythonAnywhere's currently deployed revision has not been independently verified, and no production files or scheduled tasks were changed.
-- **GitHub Actions: PASS.** Backend regression tests and the live homepage smoke test, including the new live security-header assertions, passed in [run 40756370843](https://github.com/kshchauhan-nes/grievance-portal/actions/runs/40756370843) on commit `ceb9d89`. A later documentation-triggered run is in progress; its live homepage smoke job has passed, while its backend suite has not yet completed. The smoke test does not exercise authenticated workflows.
-- **Latest reported local test result:** 100 tests passed. The separate GitHub Actions test suite also passed on the latest revision.
+- **Latest verified runner/workflow revision:** `81749a3d28873b9442b272ca0e21e45aecacbfa0`. This revision includes the one-shot escalation runner, its tests, and full-history checkout for migration coverage. The status/documentation commit follows this tested revision; PythonAnywhere's currently deployed revision has not been independently verified, and no production files or scheduled tasks were changed.
+- **GitHub Actions: PASS on the last verified code/workflow revision.** [Run 40762051655](https://github.com/kshchauhan-nes/grievance-portal/actions/runs/40762051655) on commit `81749a3d28873b9442b272ca0e21e45aecacbfa0` passed syntax checks, all 115 backend tests with no skips, and the live homepage/security-header smoke test. Full Git history is now fetched so the legacy migration tests run. The smoke test does not exercise authenticated workflows; this status-only commit triggers a new run whose result must be checked separately.
+- **Historical local test result:** 100 tests passed. The latest confirmed GitHub Actions suite ran 115 tests with no skips on commit `81749a3d28873b9442b272ca0e21e45aecacbfa0`.
 - **Manually verified on the live demo:** complaint submission and case ID display; complainant complaint history and case timeline; authority login/access and a case status update; manual escalation-check command/result.
 - **Production configuration checks completed:** runtime inspection reported production mode, a configured secret key (value not displayed), secure cookies enabled, HttpOnly enabled, and SameSite `Lax`; the WSGI file loads `/home/deploynes/.config/grievance-portal.env` and sets `COOKIE_SECURE=1`. The site loads over HTTPS and Python compilation passed. Secret strength/uniqueness and a full deployment security audit have not been established.
 - **Operations confirmed by user:** demo/authority passwords were changed; a timestamped SQLite backup was created at `/home/deploynes/backups/grievance-portal/complaints-20261028-192938.db`, size 143,360 bytes, with `PRAGMA integrity_check` returning `ok`. Restore testing has not been done.
@@ -37,12 +37,12 @@
 ### Operations and deployment
 
 - [x] Configure the WSGI environment file path and production cookie flag; confirm HTTPS responds.
-- [x] Confirm GitHub Actions backend regression tests and live homepage/security-header smoke checks passed at commit `ceb9d89` (application code remains `ffa46a4`).
-- [x] Confirm the live security-header assertions pass in workflow run [40756370843](https://github.com/kshchauhan-nes/grievance-portal/actions/runs/40756370843) on commit `ceb9d89`.
+- [x] Confirm syntax, backend regression tests (115 tests, zero skips), and live homepage/security-header smoke checks passed in [run 40762051655](https://github.com/kshchauhan-nes/grievance-portal/actions/runs/40762051655) on commit `81749a3d28873b9442b272ca0e21e45aecacbfa0`.
 - [ ] Confirm PythonAnywhere is pulled to the latest `development` revision and reload after any later application-code deployment. Documentation-only updates do not require a web-app reload. GitHub changes do not automatically deploy.
 - [ ] Confirm the PythonAnywhere account's scheduled-task entitlement in the Tasks tab; current platform rules say newer free accounts have no scheduled tasks, older free accounts retain one daily task, and paid plans support hourly/daily tasks.
 - [x] Add a one-shot escalation runner with production env validation, a non-blocking filesystem lock, and failure logging; add automated tests for environment loading, command invocation, failures, and lock contention.
-- [ ] Run the new runner tests in CI and on a safe test setup; review the production environment-file syntax before using the runner.
+- [x] Run the escalation-runner tests in CI and enable the historical migration tests by fetching full Git history; run 40762051655 passed all 115 tests with no skips.
+- [ ] Review the production environment-file syntax before using the runner, then manually run the scheduled runner in a safe setup.
 - [ ] Establish a reliable recurring escalation schedule independent of user traffic, if the account plan supports it.
 - [ ] Document and test deployment/reload and database recovery procedures.
 
