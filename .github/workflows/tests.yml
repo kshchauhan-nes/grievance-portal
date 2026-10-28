@@ -80,13 +80,33 @@ jobs:
                           f"Unexpected content type: {content_type}"
                       )
 
+                  required_headers = {
+                      "X-Content-Type-Options": "nosniff",
+                      "X-Frame-Options": "DENY",
+                      "Referrer-Policy": "same-origin",
+                  }
+                  for name, expected in required_headers.items():
+                      actual = response.headers.get(name, "")
+                      if actual.lower() != expected.lower():
+                          raise SystemExit(
+                              f"Missing/incorrect {name} header: {actual!r}"
+                          )
+
+                  csp = response.headers.get("Content-Security-Policy", "")
+                  if "frame-ancestors 'none'" not in csp:
+                      raise SystemExit("CSP frame-ancestors policy is missing.")
+
+                  hsts = response.headers.get("Strict-Transport-Security", "")
+                  if "max-age=" not in hsts.lower():
+                      raise SystemExit("HTTPS Strict-Transport-Security is missing.")
+
                   if not body.strip():
                       raise SystemExit("Homepage returned an empty response.")
 
                   if len(body) > 1_000_000:
                       raise SystemExit("Homepage response exceeded 1 MB.")
 
-                  print("PASS: HTTPS homepage returned non-empty HTML.")
+                  print("PASS: HTTPS homepage, HTML response, and security headers verified.")
           except (urllib.error.URLError, TimeoutError) as exc:
               raise SystemExit(f"FAIL: Homepage request failed: {exc}")
           PY
