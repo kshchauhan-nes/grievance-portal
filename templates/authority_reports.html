@@ -48,6 +48,17 @@
         .empty { color: #64748b; font-size: 14px; }
         a.inline { color: #1d4ed8; text-decoration: none; font-weight: bold; }
         footer { text-align: center; color: #667085; padding: 30px; }
+        a:focus-visible, button:focus-visible, input:focus-visible,
+        select:focus-visible, textarea:focus-visible {
+            outline: 3px solid #005fcc;
+            outline-offset: 2px;
+        }
+        .logout-form { display: inline; margin: 0; }
+        .logout-button {
+            border: 0; padding: 0; background: none; color: #e2e8f0;
+            font: inherit; font-size: 14px; cursor: pointer; text-decoration: none;
+        }
+        .logout-button:hover { color: white; }
     </style>
 </head>
 <body>
@@ -58,7 +69,10 @@
         <a href="{{ url_for('authority_dashboard') }}">Dashboard</a>
         <a href="{{ url_for('authority_verifications') }}">Verifications</a>
         <a href="{{ url_for('notifications_page') }}">Notifications</a>
-        <a href="{{ url_for('logout') }}">Logout</a>
+        <form method="POST" action="{{ url_for('logout') }}" class="logout-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="logout-button">Logout</button>
+        </form>
     </div>
 </nav>
 

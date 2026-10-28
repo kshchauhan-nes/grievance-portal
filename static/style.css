@@ -1339,3 +1339,23 @@ footer {
 .logout-link:hover {
     color: #344054;
 }
+
+
+/* Keep keyboard focus clearly visible without relying on color alone. */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+    outline: 3px solid #005fcc;
+    outline-offset: 2px;
+}
+
+/* Allow users to enlarge text without clipping form controls. */
+input,
+select,
+textarea,
+button {
+    max-width: 100%;
+}

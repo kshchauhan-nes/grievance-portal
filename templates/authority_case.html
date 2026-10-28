@@ -321,7 +321,8 @@
               action="{{ url_for('authority_update_status', case_id=complaint.case_id) }}">
 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
-            <select name="status" required>
+            <label for="case-status">New case status</label>
+            <select id="case-status" name="status" required>
                 <option value="">Select new status</option>
 
                 {% if complaint.status == "Submitted" %}
@@ -519,6 +520,7 @@
 
             <textarea
                 name="message"
+                aria-label="Message to the complainant"
                 maxlength="2000"
                 placeholder="Write a message to the complainant..."
                 required></textarea>
