@@ -84,15 +84,16 @@ def run_once(
         if not env_file.is_file():
             raise FileNotFoundError(f"Production environment file not found: {env_file}")
 
+        file_values = read_env_file(env_file)
         env = os.environ.copy()
-        env.update(read_env_file(env_file))
+        env.update(file_values)
         # A scheduled job must not accidentally inherit a development mode.
         env["APP_ENV"] = "production"
         env["COOKIE_SECURE"] = "1"
         env.setdefault("DATABASE_PATH", str(project_dir / "complaints.db"))
 
-        if not env.get("SECRET_KEY", "").strip():
-            raise ValueError("SECRET_KEY is missing from the production environment")
+        if not file_values.get("SECRET_KEY", "").strip():
+            raise ValueError("SECRET_KEY is missing from the production environment file")
         if not Path(env["DATABASE_PATH"]).is_absolute():
             raise ValueError("DATABASE_PATH must be an absolute path for scheduled runs")
 
@@ -109,9 +110,9 @@ def run_once(
                 logger.info("Skipped: another escalation run holds the lock")
                 return 0
 
-            command: Sequence[str] = (
+            command: Sequence[str] = [
                 str(python), "-m", "flask", "--app", "app", "run-escalation"
-            )
+            ]
             logger.info("Escalation run started")
             try:
                 result = subprocess_run(
