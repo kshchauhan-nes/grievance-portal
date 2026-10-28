@@ -6,8 +6,8 @@
 
 - Flask + SQLite grievance portal implemented for School, Hospital, and NCC sections.
 - Demo deployed on PythonAnywhere: https://deploynes.pythonanywhere.com/
-- **Latest GitHub revision:** `ffa46a4` on `development` (ignore Python virtual environment directory).
-- **GitHub Actions at `ffa46a4`: PASS.** Both backend regression tests and the configured live homepage smoke test completed successfully. The smoke test confirms an HTTPS 200 response with non-empty HTML; it does not exercise authenticated workflows.
+- **Application-code revision:** `ffa46a4` on `development`; later commits update documentation only. The current branch's documentation checks passed in GitHub Actions.
+- **GitHub Actions: PASS.** Both backend regression tests and the configured live homepage smoke test passed on `f317cf0` (README documentation update); subsequent changes are documentation-only. The smoke test confirms an HTTPS 200 response with non-empty HTML; it does not exercise authenticated workflows.
 - **Latest reported local test result:** 100 tests passed. The separate GitHub Actions test suite also passed on the latest revision.
 - **Manually verified on the live demo:** complaint submission and case ID display; complainant complaint history and case timeline; authority login/access and a case status update; manual escalation-check command/result.
 - **Production configuration checks completed:** shell-loaded environment reports `APP_ENV=production`, a non-empty `SECRET_KEY`, and `COOKIE_SECURE` defaults to `1`; the WSGI file explicitly sets production mode, loads `/home/deploynes/.config/grievance-portal.env`, and sets `COOKIE_SECURE=1`. The site loads over HTTPS and Python compilation passed. Secret strength/rotation, all runtime settings, and a full deployment security audit have not been established.
@@ -34,7 +34,7 @@
 
 - [x] Configure the WSGI environment file path and production cookie flag; confirm HTTPS responds.
 - [x] Confirm the latest GitHub Actions backend and live homepage smoke checks pass at `ffa46a4`.
-- [ ] Confirm PythonAnywhere is pulled to `ffa46a4` or newer and reload after any later code deployment. GitHub changes do not automatically deploy.
+- [ ] Confirm PythonAnywhere is pulled to the latest `development` revision and reload after any later application-code deployment. GitHub documentation-only updates do not require a web-app reload. GitHub changes do not automatically deploy.
 - [ ] Establish a reliable recurring escalation schedule independent of user traffic.
 - [ ] Document and test deployment/reload and database recovery procedures.
 
