@@ -81,6 +81,15 @@ class EscalationRunnerTests(unittest.TestCase):
         self.command.assert_not_called()
         self.assertIn("DATABASE_PATH must be an absolute path", self.log_file.read_text())
 
+    def test_shell_secret_does_not_replace_missing_file_secret(self):
+        self.env_file.write_text("DATABASE_PATH=" + str(self.root / "live.db") + "\\n",
+                                encoding="utf-8")
+        with unittest.mock.patch.dict(os.environ, {"SECRET_KEY": "inherited-secret"}):
+            self.assertEqual(self.run_runner(), 1)
+        self.command.assert_not_called()
+        self.assertIn("SECRET_KEY is missing from the production environment file",
+                      self.log_file.read_text())
+
     def test_nonzero_command_exit_is_logged_and_returned(self):
         self.command.return_value = subprocess.CompletedProcess(
             args=["python"], returncode=7, stdout="", stderr="database unavailable"
