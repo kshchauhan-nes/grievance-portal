@@ -15,7 +15,7 @@ from pathlib import Path
 import re
 import subprocess
 import sys
-from typing import Callable, Mapping, Sequence
+from typing import Callable, Sequence
 
 
 PROJECT_DIR = Path(__file__).resolve().parents[1]
@@ -90,7 +90,11 @@ def run_once(
         # A scheduled job must not accidentally inherit a development mode.
         env["APP_ENV"] = "production"
         env["COOKIE_SECURE"] = "1"
-        env.setdefault("DATABASE_PATH", str(project_dir / "complaints.db"))
+        # Never inherit a potentially unrelated database path from the scheduler's
+        # shell. Use the explicit production-file value or the project DB default.
+        env["DATABASE_PATH"] = file_values.get(
+            "DATABASE_PATH", str(project_dir / "complaints.db")
+        )
 
         if not file_values.get("SECRET_KEY", "").strip():
             raise ValueError("SECRET_KEY is missing from the production environment file")
