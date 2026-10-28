@@ -5,39 +5,42 @@
 ## Current Status
 
 - Flask + SQLite grievance portal implemented for School, Hospital, and NCC sections.
-- Demo deployed and accessible on PythonAnywhere: https://deploynes.pythonanywhere.com/
-- Automated backend tests and the GitHub Actions workflow are configured.
-- **Latest reported local test result:** 100 tests passed. This is a reported local run; it does not by itself certify the hosted deployment.
-- GitHub Actions checks Python compilation and the backend test suite. The live homepage smoke test is optional and requires the `LIVE_BASE_URL` repository variable; it checks only an HTTPS response, successful status, and non-empty HTML.
+- Demo deployed on PythonAnywhere: https://deploynes.pythonanywhere.com/
+- **Latest GitHub revision:** `ffa46a4` on `development` (ignore Python virtual environment directory).
+- **GitHub Actions at `ffa46a4`: PASS.** Both backend regression tests and the configured live homepage smoke test completed successfully. The smoke test confirms an HTTPS 200 response with non-empty HTML; it does not exercise authenticated workflows.
+- **Latest reported local test result:** 100 tests passed. The separate GitHub Actions test suite also passed on the latest revision.
 - **Manually verified on the live demo:** complaint submission and case ID display; complainant complaint history and case timeline; authority login/access and a case status update; manual escalation-check command/result.
-- These manual checks are a limited workflow smoke test, not comprehensive browser, accessibility, privacy-edge-case, or production-security sign-off.
+- **Production configuration checks completed:** shell-loaded environment reports `APP_ENV=production`, a non-empty `SECRET_KEY`, and `COOKIE_SECURE` defaults to `1`; the WSGI file explicitly sets production mode, loads `/home/deploynes/.config/grievance-portal.env`, and sets `COOKIE_SECURE=1`. The site loads over HTTPS and Python compilation passed. Secret strength/rotation, all runtime settings, and a full deployment security audit have not been established.
+- These checks are a demo smoke test, not comprehensive browser, accessibility, privacy-edge-case, or production-security sign-off.
 
 ## Remaining Work
 
-### Production security and privacy
+### Security and privacy before real use
 
-- [ ] Verify production `APP_ENV`, secret key management, HTTPS, secure cookies, session settings, and PythonAnywhere WSGI/process configuration.
-- [ ] Rotate any legacy/demo authority passwords and verify only intended authority accounts exist.
-- [ ] Review organization-scoped authorization, CSRF protections, error handling, logging, rate limiting, and privacy/identity-disclosure controls in the deployed environment.
-- [ ] Verify database backup, migration, restore, and rollback procedures without risking the live database.
-- [ ] Complete a security review and load testing before real or sensitive grievances are accepted.
+- [ ] Rotate legacy/demo authority passwords and confirm only intended authority accounts exist (requires access to the live database/account setup).
+- [ ] Review deployed organization-scoped authorization, CSRF protections, error handling, logging, per-process login throttling, and identity-disclosure controls.
+- [ ] Verify database backup, migration, restore, and rollback procedures without risking live data.
+- [ ] Review secret strength/uniqueness and session settings without exposing secret values.
+- [ ] Complete independent security review and load testing before accepting real or sensitive grievances.
 
 ### Accessibility and functional verification
 
 - [ ] Test key flows in supported browsers at desktop and mobile widths.
 - [ ] Check keyboard-only navigation, focus visibility, labels, validation/error announcements, contrast, and screen-reader behavior.
-- [ ] Retest registration/login, complainant workflows, authority permissions, status transitions, messaging/read state, notifications, verification, identity disclosure, exports, and escalation edge cases.
-- [ ] Verify behavior for unauthorized cross-organization access and invalid or missing case IDs.
+- [ ] Test registration/login, complainant workflows, authority permissions, status transitions, messaging/read state, notifications, verification, identity disclosure, exports, and escalation edge cases.
+- [ ] Test unauthorized cross-organization access and invalid/missing case IDs in the deployed environment.
 
-### Deployment verification and operations
+### Operations and deployment
 
-- [ ] Confirm the exact deployed revision matches the intended GitHub branch/commit and document the PythonAnywhere reload procedure.
-- [ ] Run/confirm the configured GitHub Actions checks and optional live homepage smoke test after deployment; remember that CI does not deploy automatically.
-- [ ] Establish an operational escalation schedule and verify it independently of user traffic.
+- [x] Configure the WSGI environment file path and production cookie flag; confirm HTTPS responds.
+- [x] Confirm the latest GitHub Actions backend and live homepage smoke checks pass at `ffa46a4`.
+- [ ] Confirm PythonAnywhere is pulled to `ffa46a4` or newer and reload after any later code deployment. GitHub changes do not automatically deploy.
+- [ ] Establish a reliable recurring escalation schedule independent of user traffic.
+- [ ] Document and test deployment/reload and database recovery procedures.
 
 ## Escalation Limitation
 
-The rule-based lazy escalation check is triggered by eligible logged-in requests and is throttled using in-memory state **per application process**. It is opportunistic: without an eligible request, a check may not run when a case reaches its threshold. Multiple worker processes have independent throttle state. This is **not a background scheduler** and does not guarantee timely escalation. For operational use, configure an external scheduler or dedicated worker to run `python -m flask --app app run-escalation` at a defined interval; account for multi-worker coordination.
+The rule-based lazy escalation check is triggered by eligible logged-in requests and is throttled using in-memory state **per application process**. It is opportunistic: without an eligible request, a check may not run when a case reaches its threshold. Multiple worker processes have independent throttle state. This is **not a background scheduler** and does not guarantee timely escalation. For operational use, configure an external scheduler or dedicated worker to run `python -m flask --app app run-escalation` at a defined interval; account for multi-worker coordination. The current PythonAnywhere free-tier setup does not provide the recurring task capability the user reported needing.
 
 ## Important Notes
 
