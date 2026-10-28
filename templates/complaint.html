@@ -96,7 +96,14 @@
 
 
     <form method="POST">
-<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+        {% if error %}
+        <div class="section-info" role="alert" style="border-color: #dc2626; color: #b91c1c;">
+            <strong>Could not submit grievance</strong>
+            <span>{{ error }}</span>
+        </div>
+        {% endif %}
 
 
         <!-- =================================================
@@ -174,20 +181,13 @@
                     Select section
                 </option>
 
-                <option value="1"
-                        data-section="ncc">
-                    NCC
+                {% for org in organizations %}
+                <option value="{{ org.id }}"
+                        data-section="{{ org.sector|lower }}"
+                        {% if request.form.get('organization_id', '')|string == org.id|string %}selected{% endif %}>
+                    {{ org.name }}
                 </option>
-
-                <option value="2"
-                        data-section="school">
-                    School
-                </option>
-
-                <option value="3"
-                        data-section="hospital">
-                    Hospital
-                </option>
+                {% endfor %}
 
             </select>
 
@@ -428,6 +428,9 @@
     const categoryHelp =
         document.getElementById("categoryHelp");
 
+    const previousCategory =
+        {{ request.form.get('category', '')|tojson }};
+
 
     const sectionData = {
 
@@ -648,6 +651,10 @@
         categoryHelp.textContent =
             `Select the category that best describes your ${section} grievance.`;
 
+        if (previousCategory) {
+            categorySelect.value = previousCategory;
+        }
+
     }
 
 
@@ -655,6 +662,8 @@
         "change",
         updateSection
     );
+
+    updateSection();
 
 </script>
 
